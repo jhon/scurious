@@ -48,7 +48,7 @@ module.exports.loop = function () {
         else if (num_upgraders < 2) {
             utils.spawnCreep(spawn, 'upgrader', parts);
         }
-        else if (num_external_harvesters < 6) {
+        else if (num_external_harvesters < 12) {
             utils.spawnCreep(spawn, 'external_harvester', parts);
         }
 
