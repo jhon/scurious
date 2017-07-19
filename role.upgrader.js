@@ -15,8 +15,12 @@ var roleUpgrader = {
             creep.say('⚡ upgrade');
         }
 
+        // Hack fix for the fact that an upgrader got stuck in the external room? How did it even get there...
+        if (creep.room.name != Game.flags['TracteurBase'].room.name) {
+            creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
+        }
         // Upgrade Upgrade Upgrade
-        if(creep.memory.upgrading) {
+        else if(creep.memory.upgrading) {
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             }
