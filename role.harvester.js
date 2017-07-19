@@ -15,6 +15,7 @@ var roleHarvester = {
         if (!creep.memory.harvesting && creep.carry.energy == 0) {
             creep.memory.harvesting = true;
             creep.memory.building = false;
+            creep.memory.target_id = null;
         }
 
         // If we couldn't find local resources and started going external, continue with that
@@ -34,7 +35,7 @@ var roleHarvester = {
                 creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
             }
             // If we found a source but it didn't have any energy...
-            else if (source && source.energy == 0) {
+            else if (false && source && source.energy == 0) {
                 // If we have obtained over 1/4 our capacity, deposit it somewhere
                 if (creep.carry.energy > creep.carryCapacity / 4) {
                     creep.memory.harvesting = false;
@@ -64,8 +65,15 @@ var roleHarvester = {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION ||
-                            structure.structureType == STRUCTURE_SPAWN ||
-                            structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                            structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+                    }
+                });
+                if(target) creep.memory.target_id = target.id;
+            }
+            if (!target || target.energy == target.energyCapacity) {
+                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                     }
                 });
                 if(target) creep.memory.target_id = target.id;

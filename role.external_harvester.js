@@ -17,6 +17,7 @@ var roleExternalHarvester = {
         if (!creep.memory.harvesting && creep.carry.energy == 0) {
             creep.memory.harvesting = true;
             creep.memory.building = false;
+            creep.memory.target_id = null;
             creep.say('🔄 harvest');
         }
 
@@ -70,8 +71,15 @@ var roleExternalHarvester = {
                     target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: (structure) => {
                             return (structure.structureType == STRUCTURE_EXTENSION ||
-                                structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                                structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+                        }
+                    });
+                    if(target) creep.memory.target_id = target.id;
+                }
+                if (!target || target.energy == target.energyCapacity) {
+                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                         }
                     });
                     if(target) creep.memory.target_id = target.id;
