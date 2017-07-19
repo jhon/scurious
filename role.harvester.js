@@ -33,10 +33,16 @@ var roleHarvester = {
             else if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
             }
-            // If we found a source but it didn't have any energy, go external
-            else if(source && source.energy == 0) {
-                creep.memory.external_harvesting = true;
-                roleExternalHarvester.run(creep);
+            // If we found a source but it didn't have any energy...
+            else if (source && source.energy == 0) {
+                // If we have obtained over 1/4 our capacity, deposit it somewhere
+                if (creep.carry.energy > creep.carryCapacity / 4) {
+                    creep.memory.harvesting = false;
+                }
+                else {
+                    creep.memory.external_harvesting = true;
+                    roleExternalHarvester.run(creep);
+                }
             }
         }
         // If we're done harvesting and we're outside the room, navigate back
