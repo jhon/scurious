@@ -25,7 +25,7 @@ var roleExternalHarvester = {
 
             // Prioritize dropped resources no matter where we are
             var source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
-            if (source && creep.pickup(source) == ERR_NOT_IN_RANGE) {
+            if (source && source.energy >= creep.carryCapacity/2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source, { visualizePathStyle: { stroke: '#00aaff' } });
             }
             else {
