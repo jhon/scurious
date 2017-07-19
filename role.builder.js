@@ -17,7 +17,13 @@ var roleBuilder = {
             creep.say('🚧 build');
         }
 
-        if (creep.memory.building) {
+        // If we aren't in the right room (probably due to being promoted?)
+        //   move to the right room
+        if (creep.room.name != Game.flags['TracteurBase'].room.name) {
+            creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
+        }
+        // Builder, start building!
+        else if (creep.memory.building) {
             let target = null;
             // Let the tower handle repairs if it's here
             // ASKME: Should the tower be handling all repairs?
