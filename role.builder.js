@@ -22,6 +22,10 @@ var roleBuilder = {
         if (creep.room.name != Game.flags['TracteurBase'].room.name) {
             creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
         }
+        // If we started working as an upgrader, work to finish the job before we go back to buildering
+        else if (creep.memory.upgrading) {
+            roleUpgrader.run(creep);
+        }
         // Builder, start building!
         else if (creep.memory.building) {
             let target = null;
@@ -68,11 +72,6 @@ var roleBuilder = {
                 creep.memory.upgrading = true;
                 roleUpgrader.run(creep);
             }
-        }
-        // If we started working as an upgrader, work to finish the job before we go back to buildering
-        else if (creep.memory.upgrading)
-        {
-            roleUpgrader.run(creep);
         }
         else {
             // Harvest from sources... poorly...
