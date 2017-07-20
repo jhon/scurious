@@ -37,7 +37,7 @@ module.exports.loop = function () {
 
         // Crazy default parts
         //let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-        let parts = [WORK, CARRY, MOVE, MOVE];
+        let parts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
 
         // Check the balance based on magic numbers that have no basis in reality
         if (num_harvesters < 6) {
@@ -50,7 +50,7 @@ module.exports.loop = function () {
             utils.spawnCreep(spawn, 'upgrader', parts);
         }
         else if (num_external_harvesters < 12) {
-            parts = [WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
+            parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
             utils.spawnCreep(spawn, 'external_harvester', parts);
         }
 
