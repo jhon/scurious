@@ -3,8 +3,19 @@ var roleExternalHarvester = require('role.external_harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var utils = require('utils');
+var screepsplus = require('LispEngineer_screepsplus');
 
 module.exports.loop = function () {
+
+    screepsplus.add_stats_callback(function (stats) {
+        Memory.stats.cpu.Start = Memory.cpu_stats.Start;
+        Memory.stats.cpu.CreepManagers = Memory.cpu_stats.CreepManagers;
+        Memory.stats.cpu.Towers = Memory.cpu_stats.Towers;
+        Memory.stats.cpu.Creeps = Memory.cpu_stats.Creeps;
+    });
+
+    // Record Start time for teh stats
+    Memory.cpu_stats = { Start: Game.cpu.getUsed() };
 
     // Keep track of the spawn for ease. We may also loop through all of these at some later point
     let spawn = Game.spawns['TracteurSpawn'];
@@ -37,7 +48,8 @@ module.exports.loop = function () {
 
         // Crazy default parts
         //let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-        let parts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
+        //let parts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
+        let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
 
         // Check the balance based on magic numbers that have no basis in reality
         if (num_harvesters < 6) {
@@ -60,6 +72,8 @@ module.exports.loop = function () {
             utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE]);
         }
     }
+
+    Memory.cpu_stats.CreepManagers = Game.cpu.getUsed() - Memory.cpu_stats.Start;
     
 
     // Look through all the towers in the room
@@ -87,6 +101,8 @@ module.exports.loop = function () {
         }
     }
 
+    Memory.cpu_stats.Towers = Game.cpu.getUsed() - Memory.cpu_stats.CreepManagers;
+
     // RUN ALL THE THINGS!
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
@@ -104,4 +120,10 @@ module.exports.loop = function () {
             roleExternalHarvester.run(creep);
         }
     }
+
+    Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;
+
+    RawMemory.setActiveSegments([99]);
+    screepsplus.collect_stats();
+    RawMemory.segments[99] = JSON.stringify(Memory.stats);
 }
