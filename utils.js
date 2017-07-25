@@ -51,7 +51,22 @@
             Memory.pop_count++;
         }
         return new_name;
-    }
+    },
+
+    // EzMove
+    moveCreepTo: function (in_creep, in_destination, in_pathColor)
+    {
+        let visualize_path_style = undefined;
+        if (in_pathColor)
+        {
+            visualize_path_style = { stroke: in_pathColor };
+        }
+        let creep_moved = in_creep.memory.last_pos && (in_creep.pos.x != in_creep.memory.last_pos.x ||
+            in_creep.pos.y != in_creep.memory.last_pos.y ||
+            in_creep.room.name != in_creep.memory.last_pos.roomName);
+        
+        return in_creep.moveTo(in_destination, { ignoreCreeps: creep_moved, visualizePathStyle: visualize_path_style });
+    },
 };
 
 module.exports = utils;

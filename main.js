@@ -119,6 +119,7 @@ module.exports.loop = function () {
         {
             roleExternalHarvester.run(creep);
         }
+        creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);
     }
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;

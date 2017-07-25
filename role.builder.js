@@ -20,7 +20,7 @@ var roleBuilder = {
         // If we aren't in the right room (probably due to being promoted?)
         //   move to the right room
         if (creep.room.name != Game.flags['TracteurBase'].room.name) {
-            creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
+            utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
         }
         // If we started working as an upgrader, work to finish the job before we go back to buildering
         else if (creep.memory.upgrading) {
@@ -34,7 +34,7 @@ var roleBuilder = {
             let tower = creep.room.find(FIND_MY_STRUCTURES, { filter: (structure) => { return structure.structureType == STRUCTURE_TOWER; } });
             if (!tower && (target = utils.findClosestDamagedStructure(creep))) {
                 if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    utils.moveCreepTo(creep, target, '#ffffff');
                 }
             }
 
@@ -48,7 +48,7 @@ var roleBuilder = {
             }))
             {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    utils.moveCreepTo(creep, target, '#ffffff');
                 }
             }
             // Then look for non-roads
@@ -56,13 +56,13 @@ var roleBuilder = {
                 filter: (structure) => { return structure.structureType != STRUCTURE_ROAD; }
             })) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    utils.moveCreepTo(creep, target, '#ffffff');
                 }
             }
             // Then anything else
             else if (target = utils.findClosest(creep, FIND_CONSTRUCTION_SITES)) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    utils.moveCreepTo(creep, target, '#ffffff');
                 }
             }
             // If we cannot find anything else to do, call into the upgrader code and start
@@ -77,7 +77,7 @@ var roleBuilder = {
             // Harvest from sources... poorly...
             var source = utils.findClosest(creep, FIND_SOURCES);
             if(source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
+                utils.moveCreepTo(creep, source, '#ffaa00');
             }
         }
     }

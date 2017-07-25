@@ -27,7 +27,7 @@ var roleExternalHarvester = {
             // Prioritize dropped resources no matter where we are
             var source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
             if (source && source.energy >= creep.carryCapacity/2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#00aaff' } });
+                utils.moveCreepTo(creep, source, '#00aaff');
             }
             else {
                 // This is pretty simple pathing. If we're not in the external room
@@ -35,7 +35,7 @@ var roleExternalHarvester = {
                 //   flag because if we don't have a presence in that room we can't get
                 //   the flag's position and I'm multirooming with a GCL of 1 right now
                 if (creep.room.name != EXTERNAL_ROOM) {
-                    creep.moveTo(EXTERNAL_ROOM_POS, { visualizePathStyle: { stroke: '#ffaa00' } });
+                    utils.moveCreepTo(creep, EXTERNAL_ROOM_POS, '#ffaa00');
                 }
                 else {
                     // Once we're in the hardcoded room, go to the source we always go to
@@ -46,7 +46,7 @@ var roleExternalHarvester = {
                         if (source) creep.memory.source_id = source.id;
                     }
                     if (source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
+                        utils.moveCreepTo(creep, source, '#ffaa00');
                     }
                 }
             }
@@ -60,7 +60,7 @@ var roleExternalHarvester = {
             // If we're not in the homeroom, navitage back there. This time we can use the flag since it's position
             //   is visible to us
             if (creep.room.name != Game.flags['TracteurBase'].room.name) {
-                creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
+                utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
             }
             else {
                 // Get the target we've been pursuing
@@ -87,7 +87,7 @@ var roleExternalHarvester = {
                 // If a suitable target exists, transfer energy there
                 if (target) {
                     if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                        utils.moveCreepTo(creep, target, '#ffffff');
                     }
                 }
                 // Otherwise, stay a while and build

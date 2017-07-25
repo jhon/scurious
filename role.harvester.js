@@ -26,13 +26,13 @@ var roleHarvester = {
         else if (creep.memory.harvesting) {
             // Are their dropped resources? Prioritize those
             let source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
-            if (source && source.energy >= creep.carryCapacity/2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#00aaff' } });
+            if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
+                utils.moveCreepTo(creep, source, '#00aaff');
             }
             // Otherwise, go to your normal sources
             // FIXME: the find should filter to see if sources have energy to better handle multi-source rooms
             else if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
+                utils.moveCreepTo(creep, source, '#ffaa00');
             }
             // If we found a source but it didn't have any energy...
             else if (false && source && source.energy == 0) {
@@ -49,7 +49,7 @@ var roleHarvester = {
         // If we're done harvesting and we're outside the room, navigate back
         else if (!creep.memory.harvesting && creep.room.name != Game.flags['TracteurBase'].room.name)
         {
-            creep.moveTo(Game.flags['TracteurBase'].pos, { visualizePathStyle: { stroke: '#ffffff' } });
+            utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
         }
         // Builder, keep building!
         else if (creep.memory.building)
@@ -81,7 +81,7 @@ var roleHarvester = {
             // ULTIMATE COSMIC POWER!
             if (target) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    utils.moveCreepTo(creep, target, '#ffffff');
                 }
             }
             // If we can't find anyone who wants this delicious energy we've harvested,
