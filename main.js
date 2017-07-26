@@ -22,9 +22,14 @@ module.exports.loop = function () {
 
     // Keep a local version of creeps? I don't actually use this it was just in the tutorial
     for(var name in Memory.creeps) {
-        if(!Game.creeps[name]) {
+        if (!Game.creeps[name]) {
+            delete Memory.creeps[name]._move; // Trim _move
+            console.log('delete Memory.creeps["' + name + '"] = ' + JSON.stringify(Memory.creeps[name]));
+            if (Memory.creeps[name].ttl > 1 && Memory.creeps[name].last_pos.roomName != spawn.room.name)
+            {
+                Memory.last_external_death = Game.time;
+            }
             delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
             Memory.pop_count--;
         }
     }
@@ -61,7 +66,7 @@ module.exports.loop = function () {
         else if (num_upgraders < 2) {
             utils.spawnCreep(spawn, 'upgrader', parts);
         }
-        else if (num_external_harvesters < 12) {
+        else if (num_external_harvesters < 12 && Memory.last_external_death + 1200 > Game.time) {
             parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
             utils.spawnCreep(spawn, 'external_harvester', parts);
         }
@@ -120,6 +125,7 @@ module.exports.loop = function () {
             roleExternalHarvester.run(creep);
         }
         creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);
+        creep.memory.ttl = creep.ticksToLive;
     }
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;
