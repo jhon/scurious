@@ -67,9 +67,9 @@ module.exports.loop = function () {
         }
 
         // If everything is dead (but we still have a spawn for some reason), try to rebuild!
-        if (!spawn.spawning && spawn.energy == 300 && Memory.pop_count == 0 && spawn.room.energyAvailable == 300)
+        else if (!spawn.spawning && Memory.pop_count == 0)
         {
-            utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE]);
+            utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE, MOVE]);
         }
     }
 
