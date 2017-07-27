@@ -66,7 +66,7 @@ module.exports.loop = function () {
         else if (num_upgraders < 2) {
             utils.spawnCreep(spawn, 'upgrader', parts);
         }
-        else if (num_external_harvesters < 12 && Memory.last_external_death + 1200 > Game.time) {
+        else if (num_external_harvesters < 12 && Memory.last_external_death + 1200 < Game.time) {
             parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
             utils.spawnCreep(spawn, 'external_harvester', parts);
         }
