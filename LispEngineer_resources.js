@@ -119,11 +119,14 @@ function summarize_room_internal(room) {
     const structure_types = new Set(room.find(FIND_STRUCTURES).map(s => s.structureType));
     const structure_info = {};
     for (const s of structure_types) {
-        const ss = room.find(FIND_STRUCTURES, {filter: str => str.structureType == s});
+        const ss = room.find(FIND_STRUCTURES, { filter: str => str.structureType == s });
+        const sum = _.sum(ss, 'hits');
         structure_info[s] = {
             count: ss.length,
             min_hits: _.min(ss, 'hits').hits,
             max_hits: _.max(ss, 'hits').hits,
+            avg_hits: sum / ss.length,
+            avg_pct: 100 * (sum / _.sum(ss,'hitsMax')),
         };
     }
     // console.log(JSON.stringify(structure_info));
