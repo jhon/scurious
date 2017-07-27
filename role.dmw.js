@@ -47,9 +47,11 @@ module.exports.run = function (in_creep) {
         let target = Game.getObjectById(in_creep.memory.target_id)
         if (!target || target.structureType != STRUCTURE_SPAWN) {
             target = in_creep.pos.findClosestByPath(FIND_MY_SPAWNS);
-            in_creep.memory.target_id = target.id;
+            if (target) {
+                in_creep.memory.target_id = target.id;
+            }
         }
-        if (target.recycleCreep(in_creep) == ERR_NOT_IN_RANGE) {
+        if (target && target.recycleCreep(in_creep) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(in_creep, target, '#ff0000');
         }
     }
