@@ -31,8 +31,9 @@
     // Filter for damaged structure. Used by tower and creep repair
     findClosestDamagedStructure: function (in_creep)
     {
+        // Find structures < 100% or roads < 90%
         return in_creep.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
+            filter: (structure) => (structure.structureType!=STRUCTURE_ROAD)?(structure.hits < structure.hitsMax):(structure.hits < structure.hitsMax*0.9)
         });
     },
 
@@ -61,6 +62,17 @@
         {
             visualize_path_style = { stroke: in_pathColor };
         }
+
+        // Am I on a road? Repair it
+        //   Don't verify it's actually a road. If we can walk on it we're willing
+        //   to repair it (e.g. rampart)
+        if (in_creep.carry.energy > 0) {
+            let road = in_creep.pos.lookFor(LOOK_STRUCTURES)[0];
+            if (road) {
+                in_creep.repair(road);
+            }
+        }
+
         let creep_moved = in_creep.memory.last_pos && (in_creep.pos.x != in_creep.memory.last_pos.x ||
             in_creep.pos.y != in_creep.memory.last_pos.y ||
             in_creep.room.name != in_creep.memory.last_pos.roomName);
