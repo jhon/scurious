@@ -2,6 +2,7 @@ var roleHarvester = require('role.harvester');
 var roleExternalHarvester = require('role.external_harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var roleDmw = require('role.dmw');
 var utils = require('utils');
 var screepsplus = require('LispEngineer_screepsplus');
 
@@ -55,26 +56,28 @@ module.exports.loop = function () {
         //let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
         //let parts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
         let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
+        let cost = 4 * 100 + 4 * 50 + 4 * 50;
 
         // Check the balance based on magic numbers that have no basis in reality
         if (num_harvesters < 6) {
-            utils.spawnCreep(spawn, 'harvester', parts);
+            utils.spawnCreep(spawn, 'harvester', parts, cost);
         }
         else if (num_builders < 0) {
-            utils.spawnCreep(spawn, 'builder', parts);
+            utils.spawnCreep(spawn, 'builder', parts, cost);
         }
         else if (num_upgraders < 2) {
-            utils.spawnCreep(spawn, 'upgrader', parts);
+            utils.spawnCreep(spawn, 'upgrader', parts, cost);
         }
         else if (num_external_harvesters < 12 && Memory.last_external_death + 1200 < Game.time) {
             parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
-            utils.spawnCreep(spawn, 'external_harvester', parts);
+            cost = 2 * 100 + 3 * 50 + 5 * 50;
+            utils.spawnCreep(spawn, 'external_harvester', parts, cost);
         }
 
         // If everything is dead (but we still have a spawn for some reason), try to rebuild!
         if (!spawn.spawning && Memory.pop_count == 0)
         {
-            utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE, MOVE]);
+            utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE, MOVE], 250);
         }
     }
 
@@ -111,6 +114,24 @@ module.exports.loop = function () {
     // RUN ALL THE THINGS!
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
+
+        creep.memory.ttl = creep.ticksToLive;
+        creep.memory.ttl_max = Math.max(creep.ticksToLive, creep.memory.ttl_max);
+
+        if (creep.memory.role != 'dmw') {
+            // If the creep can't work or move or if it isn't worth keeping around: kill it off
+            let parts = _.groupBy(_.filter(creep.body, (x) => x.hits != 0), "type");
+            if (!parts.work || !parts.carry || !parts.move || creep.memory.ttl < 50) {
+                if (creep.isWorthRecycling(10, 25)) {
+                    creep.recycle();
+                }
+                else {
+                    creep.suicide();
+                }
+            }
+        }
+
+
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
@@ -125,7 +146,6 @@ module.exports.loop = function () {
             roleExternalHarvester.run(creep);
         }
         creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);
-        creep.memory.ttl = creep.ticksToLive;
     }
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;
