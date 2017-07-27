@@ -50,7 +50,7 @@ module.exports.run = function (in_creep) {
             in_creep.memory.target_id = target.id;
         }
         if (target.recycleCreep(in_creep) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(in_creep,target);
+            utils.moveCreepTo(in_creep, target);
         }
     }
 }

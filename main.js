@@ -22,12 +22,11 @@ module.exports.loop = function () {
     let spawn = Game.spawns['TracteurSpawn'];
 
     // Keep a local version of creeps? I don't actually use this it was just in the tutorial
-    for(var name in Memory.creeps) {
+    for (var name in Memory.creeps) {
         if (!Game.creeps[name]) {
             delete Memory.creeps[name]._move; // Trim _move
             console.log('delete Memory.creeps["' + name + '"] = ' + JSON.stringify(Memory.creeps[name]));
-            if (Memory.creeps[name].ttl > 1 && Memory.creeps[name].last_pos.roomName != spawn.room.name)
-            {
+            if (Memory.creeps[name].ttl > 1 && Memory.creeps[name].last_pos.roomName != spawn.room.name) {
                 Memory.last_external_death = Game.time;
             }
             delete Memory.creeps[name];
@@ -75,17 +74,16 @@ module.exports.loop = function () {
         }
 
         // If everything is dead (but we still have a spawn for some reason), try to rebuild!
-        if (!spawn.spawning && Memory.pop_count == 0)
-        {
+        if (!spawn.spawning && Memory.pop_count == 0) {
             utils.spawnCreep(spawn, 'harvester', [WORK, CARRY, MOVE, MOVE], 250);
         }
     }
 
     Memory.cpu_stats.CreepManagers = Game.cpu.getUsed() - Memory.cpu_stats.Start;
-    
+
 
     // Look through all the towers in the room
-    let towers = spawn.room.find(FIND_MY_STRUCTURES, { filter: (structure) => { return structure.structureType == STRUCTURE_TOWER; }});
+    let towers = spawn.room.find(FIND_MY_STRUCTURES, { filter: (structure) => { return structure.structureType == STRUCTURE_TOWER; } });
     for (let t in towers) {
         let tower = towers[t];
         // If we can find a hostile, attack it
@@ -112,7 +110,7 @@ module.exports.loop = function () {
     Memory.cpu_stats.Towers = Game.cpu.getUsed() - Memory.cpu_stats.CreepManagers;
 
     // RUN ALL THE THINGS!
-    for(let name in Game.creeps) {
+    for (let name in Game.creeps) {
         let creep = Game.creeps[name];
 
         creep.memory.ttl = creep.ticksToLive;
@@ -132,17 +130,16 @@ module.exports.loop = function () {
         }
 
 
-        if(creep.memory.role == 'harvester') {
+        if (creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
-        if(creep.memory.role == 'upgrader') {
+        if (creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        if(creep.memory.role == 'builder') {
+        if (creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         }
-        if (creep.memory.role == 'external_harvester')
-        {
+        if (creep.memory.role == 'external_harvester') {
             roleExternalHarvester.run(creep);
         }
         creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);

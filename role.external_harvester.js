@@ -26,7 +26,7 @@ var roleExternalHarvester = {
 
             // Prioritize dropped resources no matter where we are
             var source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
-            if (source && source.energy >= creep.carryCapacity/2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
+            if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, source, '#00aaff');
             }
             else {
@@ -52,8 +52,7 @@ var roleExternalHarvester = {
             }
         }
         // Builder! Keep Building!
-        else if (creep.memory.building)
-        {
+        else if (creep.memory.building) {
             roleBuilder.run(creep);
         }
         else {
@@ -74,7 +73,7 @@ var roleExternalHarvester = {
                                 structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
                         }
                     });
-                    if(target) creep.memory.target_id = target.id;
+                    if (target) creep.memory.target_id = target.id;
                 }
                 if (!target || target.energy == target.energyCapacity) {
                     target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -82,7 +81,7 @@ var roleExternalHarvester = {
                             return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                         }
                     });
-                    if(target) creep.memory.target_id = target.id;
+                    if (target) creep.memory.target_id = target.id;
                 }
                 // If a suitable target exists, transfer energy there
                 if (target) {

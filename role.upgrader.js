@@ -3,14 +3,14 @@ var utils = require('utils');
 var roleUpgrader = {
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function (creep) {
 
         // QUICK! START UP THE STATE MACHINE!
-        if(creep.memory.upgrading && creep.carry.energy == 0) {
+        if (creep.memory.upgrading && creep.carry.energy == 0) {
             creep.memory.upgrading = false;
             creep.say('🔄 harvest');
         }
-        if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
+        if (!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
             creep.memory.upgrading = true;
             creep.say('⚡ upgrade');
         }
@@ -20,7 +20,7 @@ var roleUpgrader = {
             utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
         }
         // Upgrade Upgrade Upgrade
-        else if(creep.memory.upgrading) {
+        else if (creep.memory.upgrading) {
             if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, creep.room.controller, '#ffffff');
             }

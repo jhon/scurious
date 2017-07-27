@@ -19,8 +19,7 @@ var roleHarvester = {
         }
 
         // If we couldn't find local resources and started going external, continue with that
-        if (creep.memory.external_harvesting)
-        {
+        if (creep.memory.external_harvesting) {
             roleExternalHarvester.run(creep);
         }
         else if (creep.memory.harvesting) {
@@ -47,13 +46,11 @@ var roleHarvester = {
             }
         }
         // If we're done harvesting and we're outside the room, navigate back
-        else if (!creep.memory.harvesting && creep.room.name != Game.flags['TracteurBase'].room.name)
-        {
+        else if (!creep.memory.harvesting && creep.room.name != Game.flags['TracteurBase'].room.name) {
             utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
         }
         // Builder, keep building!
-        else if (creep.memory.building)
-        {
+        else if (creep.memory.building) {
             roleBuilder.run(creep);
         }
         else {
@@ -68,7 +65,7 @@ var roleHarvester = {
                             structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
                     }
                 });
-                if(target) creep.memory.target_id = target.id;
+                if (target) creep.memory.target_id = target.id;
             }
             if (!target || target.energy == target.energyCapacity) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -76,7 +73,7 @@ var roleHarvester = {
                         return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                     }
                 });
-                if(target) creep.memory.target_id = target.id;
+                if (target) creep.memory.target_id = target.id;
             }
             // ULTIMATE COSMIC POWER!
             if (target) {

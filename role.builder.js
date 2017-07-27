@@ -4,15 +4,15 @@ var utils = require('utils');
 var roleBuilder = {
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function (creep) {
 
         // QUICK! START UP THE STATE MACHINE!
-        if(creep.memory.building && creep.carry.energy == 0) {
+        if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
             creep.memory.upgrading = false;
             creep.say('🔄 harvest');
         }
-        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+        if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
             creep.say('🚧 build');
         }
@@ -45,8 +45,7 @@ var roleBuilder = {
                     const l = structure.pos.lookFor(LOOK_TERRAIN);
                     return (l.length && l[0] == 'swamp');
                 }
-            }))
-            {
+            })) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
                     utils.moveCreepTo(creep, target, '#ffffff');
                 }
@@ -76,7 +75,7 @@ var roleBuilder = {
         else {
             // Harvest from sources... poorly...
             var source = utils.findClosest(creep, FIND_SOURCES);
-            if(source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            if (source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, source, '#ffaa00');
             }
         }
