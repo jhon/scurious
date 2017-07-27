@@ -119,12 +119,16 @@ module.exports.loop = function () {
         if (creep.memory.role != 'dmw') {
             // If the creep can't work or move or if it isn't worth keeping around: kill it off
             let parts = _.groupBy(_.filter(creep.body, (x) => x.hits != 0), "type");
-            if (!parts.work || !parts.carry || !parts.move || creep.memory.ttl < 50) {
-                if (creep.isWorthRecycling(10, 25)) {
-                    creep.recycle();
+            let force_suicide = (!parts.work || !parts.carry || !parts.move);
+            if (force_suicide || creep.memory.ttl < 50) {
+                if (force_suicide || !creep.isWorthRecycling(10, 25)) {
+                    console.log(`Euthanizing ${creep.memory.role} ${creep.name}`);
+                    creep.memory.role_in_life = creep.memory.role;
+                    creep.memory.role = 'euthanized';
+                    creep.suicide();
                 }
                 else {
-                    creep.suicide();
+                    creep.recycle();                    
                 }
             }
         }
