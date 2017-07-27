@@ -42,15 +42,15 @@ module.exports.run = function (in_creep) {
     // More futureproofing than I really need :)
     var r = _.findKey(in_creep.carry);
     if (r) {
-        in_creep.drop(r[1]);
+        in_creep.drop(r);
     } else {
         let target = Game.getObjectById(in_creep.memory.target_id)
         if (!target || target.structureType != STRUCTURE_SPAWN) {
-            in_creep.target = in_creep.pos.findClosestByPath(FIND_MY_SPAWNS);
+            target = in_creep.pos.findClosestByPath(FIND_MY_SPAWNS);
             in_creep.memory.target_id = target.id;
         }
         if (target.recycleCreep(in_creep) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(in_creep, target);
+            utils.moveCreepTo(in_creep, target, '#ff0000');
         }
     }
 }
