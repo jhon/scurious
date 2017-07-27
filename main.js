@@ -152,4 +152,6 @@ module.exports.loop = function () {
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;
 
     screepsplus.collect_stats();
+
+    Memory.stats.cpu.stats = Game.cpu.getUsed() - Memory.cpu_stats.Creeps;
 }
