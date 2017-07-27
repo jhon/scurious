@@ -150,7 +150,5 @@ module.exports.loop = function () {
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Towers;
 
-    RawMemory.setActiveSegments([99]);
     screepsplus.collect_stats();
-    RawMemory.segments[99] = JSON.stringify(Memory.stats);
 }
