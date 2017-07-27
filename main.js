@@ -6,6 +6,14 @@ var roleDmw = require('role.dmw');
 var utils = require('utils');
 var screepsplus = require('LispEngineer_screepsplus');
 
+const DISPATCH_TABLE = {
+    'harvester': roleHarvester.run,
+    'upgrader': roleUpgrader.run,
+    'builder': roleBuilder.run,
+    'external_harvester': roleExternalHarvester.run,
+    'dmw': roleDmw.run
+};
+
 module.exports.loop = function () {
 
     screepsplus.add_stats_callback(function (stats) {
@@ -133,19 +141,11 @@ module.exports.loop = function () {
             }
         }
 
-
-        if (creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
+        if (creep.memory.role in DISPATCH_TABLE)
+        {
+            DISPATCH_TABLE[creep.memory.role](creep);
         }
-        if (creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep);
-        }
-        if (creep.memory.role == 'builder') {
-            roleBuilder.run(creep);
-        }
-        if (creep.memory.role == 'external_harvester') {
-            roleExternalHarvester.run(creep);
-        }
+        
         creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);
     }
 
