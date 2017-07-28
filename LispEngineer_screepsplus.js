@@ -43,7 +43,6 @@ function collect_stats() {
 
     // Note: This is fragile and will change if the Game.cpu API changes
     Memory.stats.cpu = Game.cpu;
-    Memory.stats.cpu.used = Game.cpu.getUsed(); // AT END OF MAIN LOOP
 
     // Note: This is fragile and will change if the Game.gcl API changes
     Memory.stats.gcl = Game.gcl;
@@ -67,6 +66,8 @@ function collect_stats() {
     // 1. Merge in the current repair ratchets into the room summary
     // TODO: Merge in the current creep desired numbers into the room summary
     global.stats_callbacks.fire(Memory.stats);
+
+    Memory.stats.cpu.used = Game.cpu.getUsed(); // AT END OF MAIN LOOP
 } // collect_stats
 
 module.exports = {
