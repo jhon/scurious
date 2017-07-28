@@ -126,7 +126,7 @@ module.exports.loop = function () {
 
         if (creep.memory.role != 'dmw') {
             // If the creep can't work or move or if it isn't worth keeping around: kill it off
-            let parts = _.groupBy(_.filter(creep.body, (x) => x.hits != 0), "type");
+            let parts = _.countBy(_.filter(creep.body, (x) => x.hits != 0), "type");
             let force_suicide = (!parts.work || !parts.carry || !parts.move);
             if (force_suicide || creep.memory.ttl < 50) {
                 if (force_suicide || !creep.isWorthRecycling(10, 25)) {
