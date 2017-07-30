@@ -1,4 +1,4 @@
-﻿var utils = {
+﻿module.exports = {
     // Basic as the crow flies distance
     calcDist: function (a, b)
     {
@@ -80,5 +80,3 @@
         return in_creep.moveTo(in_destination, { ignoreCreeps: creep_moved, visualizePathStyle: visualize_path_style });
     },
 };
-
-module.exports = utils;

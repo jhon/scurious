@@ -12,10 +12,6 @@ const DISPATCH_TABLE = {
     'dmw': roleDmw.run
 };
 
-////
-// Original module structure/function comes from @aalku, this module is more hack than man now 
-////
-
 Creep.prototype.recycle = function () {
     console.log(`Recycling ${this.memory.role} ${this.name}`);
     this.memory.role_in_life = this.memory.role;

@@ -2,7 +2,7 @@ require('prototype.Structure');
 require('prototype.StructureSpawn');
 require('prototype.StructureTower');
 require('prototype.Creep');
-var screepsplus = require('LispEngineer_screepsplus');
+const screepsplus = require('LispEngineer_screepsplus');
 
 const profiler = require('screeps-profiler');
 profiler.enable();
@@ -10,7 +10,7 @@ profiler.enable();
 module.exports.loop = function () { profiler.wrap(function() {
 
     // Clean up creep memory for creeps we don't have any more :(
-    for (var name in Memory.creeps) {
+    for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
             delete Memory.creeps[name]._move; // Trim _move
             console.log('delete Memory.creeps["' + name + '"] = ' + JSON.stringify(Memory.creeps[name]));

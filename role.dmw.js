@@ -1,8 +1,8 @@
-﻿var utils = require('utils');
+﻿const utils = require('utils');
 
 module.exports.run = function (in_creep) {
     // More futureproofing than I really need :)
-    var r = _.findKey(in_creep.carry);
+    let r = _.findKey(in_creep.carry);
     if (r) {
         in_creep.drop(r);
     } else {
@@ -17,4 +17,4 @@ module.exports.run = function (in_creep) {
             utils.moveCreepTo(in_creep, target, '#ff0000');
         }
     }
-}
+};
