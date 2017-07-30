@@ -1,24 +1,11 @@
 require('prototype.Structure');
 require('prototype.StructureSpawn');
 require('prototype.StructureTower');
-var roleHarvester = require('role.harvester');
-var roleExternalHarvester = require('role.external_harvester');
-var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
-var roleDmw = require('role.dmw');
-var utils = require('utils');
+require('prototype.Creep');
 var screepsplus = require('LispEngineer_screepsplus');
 
 const profiler = require('screeps-profiler');
 profiler.enable();
-
-const DISPATCH_TABLE = {
-    'harvester': roleHarvester.run,
-    'upgrader': roleUpgrader.run,
-    'builder': roleBuilder.run,
-    'external_harvester': roleExternalHarvester.run,
-    'dmw': roleDmw.run
-};
 
 module.exports.loop = function () { profiler.wrap(function() {
 
@@ -47,36 +34,7 @@ module.exports.loop = function () { profiler.wrap(function() {
     Memory.cpu_stats.Structures = Game.cpu.getUsed() - Memory.cpu_stats.Start;
     
     // RUN ALL THE THINGS!
-    for (let name in Game.creeps) {
-        let creep = Game.creeps[name];
-
-        creep.memory.ttl = creep.ticksToLive;
-        creep.memory.ttl_max = Math.max(creep.ticksToLive, creep.memory.ttl_max);
-
-        if (creep.memory.role != 'dmw') {
-            // If the creep can't work or move or if it isn't worth keeping around: kill it off
-            let parts = _.countBy(_.filter(creep.body, (x) => x.hits != 0), "type");
-            let force_suicide = (!parts.work || !parts.carry || !parts.move);
-            if (force_suicide || creep.memory.ttl < 50) {
-                if (force_suicide || !creep.isWorthRecycling(10, 25)) {
-                    console.log(`Euthanizing ${creep.memory.role} ${creep.name}`);
-                    creep.memory.role_in_life = creep.memory.role;
-                    creep.memory.role = 'euthanized';
-                    creep.suicide();
-                }
-                else {
-                    creep.recycle();                    
-                }
-            }
-        }
-
-        if (creep.memory.role in DISPATCH_TABLE)
-        {
-            DISPATCH_TABLE[creep.memory.role](creep);
-        }
-        
-        creep.memory.last_pos = new RoomPosition(creep.pos.x, creep.pos.y, creep.room.name);
-    }
+    _.each(Game.creeps, (x) => x.run());
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Structures;
 
