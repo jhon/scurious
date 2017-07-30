@@ -14,7 +14,7 @@ StructureSpawn.prototype.run = function () {
 
 		// Grab counts for all the roles
 		let num_harvesters = utils.countCreeps('harvester');
-		let num_builders = utils.countCreeps('builder');
+		let num_workers = utils.countCreeps('worker');
 		let num_upgraders = utils.countCreeps('upgrader');
 		let num_drones = utils.countCreeps('drone');
 
@@ -28,8 +28,8 @@ StructureSpawn.prototype.run = function () {
 		if (num_harvesters < 6) {
 			utils.spawnCreep(this, 'harvester', parts, cost);
 		}
-		else if (num_builders < 0) {
-			utils.spawnCreep(this, 'builder', parts, cost);
+		else if (num_workers < 0) {
+			utils.spawnCreep(this, 'worker', parts, cost);
 		}
 		else if (num_upgraders < 2) {
 			utils.spawnCreep(this, 'upgrader', parts, cost);

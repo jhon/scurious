@@ -1,5 +1,4 @@
-﻿const roleBuilder = require('role.builder');
-const utils = require('utils');
+﻿const utils = require('utils');
 
 module.exports.run = function (creep) {
     // QUICK! START UP THE STATE MACHINE!
@@ -8,7 +7,6 @@ module.exports.run = function (creep) {
     }
     if (!creep.memory.harvesting && creep.carry.energy == 0) {
         creep.memory.harvesting = true;
-        creep.memory.building = false;
         creep.memory.target_id = null;
     }
 
@@ -27,10 +25,6 @@ module.exports.run = function (creep) {
     // If we're done harvesting and we're outside the room, navigate back
     else if (!creep.memory.harvesting && creep.room.name != Game.flags['TracteurBase'].room.name) {
         utils.moveCreepTo(creep, Game.flags['TracteurBase'].pos, '#ffffff');
-    }
-    // Builder, keep building!
-    else if (creep.memory.building) {
-        roleBuilder.run(creep);
     }
     else {
         // Get our stored target
@@ -59,13 +53,6 @@ module.exports.run = function (creep) {
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, target, '#ffffff');
             }
-        }
-        // If we can't find anyone who wants this delicious energy we've harvested,
-        //   go build something with it
-        else {
-            creep.say('🚧 build');
-            creep.memory.building = true;
-            roleBuilder.run(creep);
         }
     }
 };

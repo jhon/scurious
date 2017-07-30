@@ -1,4 +1,4 @@
-﻿const roleBuilder = require('role.builder');
+﻿
 const utils = require('utils');
 
 const EXTERNAL_ROOM = 'W5N8';
@@ -12,7 +12,6 @@ module.exports.run = function (creep) {
     }
     if (!creep.memory.harvesting && creep.carry.energy == 0) {
         creep.memory.harvesting = true;
-        creep.memory.building = false;
         creep.memory.target_id = null;
         creep.say('🔄 harvest');
     }
@@ -47,10 +46,6 @@ module.exports.run = function (creep) {
             }
         }
     }
-    // Builder! Keep Building!
-    else if (creep.memory.building) {
-        roleBuilder.run(creep);
-    }
     else {
         // If we're not in the homeroom, navitage back there. This time we can use the flag since it's position
         //   is visible to us
@@ -84,12 +79,6 @@ module.exports.run = function (creep) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     utils.moveCreepTo(creep, target, '#ffffff');
                 }
-            }
-            // Otherwise, stay a while and build
-            else {
-                creep.say('🚧 build');
-                creep.memory.building = true;
-                roleBuilder.run(creep);
             }
         }
     }
