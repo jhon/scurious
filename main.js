@@ -6,6 +6,9 @@ var roleDmw = require('role.dmw');
 var utils = require('utils');
 var screepsplus = require('LispEngineer_screepsplus');
 
+const profiler = require('screeps-profiler');
+profiler.enable();
+
 const DISPATCH_TABLE = {
     'harvester': roleHarvester.run,
     'upgrader': roleUpgrader.run,
@@ -14,14 +17,7 @@ const DISPATCH_TABLE = {
     'dmw': roleDmw.run
 };
 
-module.exports.loop = function () {
-
-    screepsplus.add_stats_callback(function (stats) {
-        Memory.stats.cpu.Start = Memory.cpu_stats.Start;
-        Memory.stats.cpu.CreepManagers = Memory.cpu_stats.CreepManagers;
-        Memory.stats.cpu.Towers = Memory.cpu_stats.Towers;
-        Memory.stats.cpu.Creeps = Memory.cpu_stats.Creeps;
-    });
+module.exports.loop = function () { profiler.wrap(function() {
 
     // Record Start time for teh stats
     Memory.cpu_stats = { Start: Game.cpu.getUsed() };
@@ -153,6 +149,10 @@ module.exports.loop = function () {
 
     screepsplus.collect_stats();
 
+    Memory.stats.cpu.Start = Memory.cpu_stats.Start;
+    Memory.stats.cpu.CreepManagers = Memory.cpu_stats.CreepManagers;
+    Memory.stats.cpu.Towers = Memory.cpu_stats.Towers;
+    Memory.stats.cpu.Creeps = Memory.cpu_stats.Creeps;
     Memory.stats.cpu.used = Game.cpu.getUsed(); // AT END OF MAIN LOOP
-    Memory.stats.cpu.stats = Memory.stats.cpu.used - Memory.cpu_stats.Creeps;
-}
+    Memory.stats.cpu.stats = Memory.stats.cpu.used - Memory.stats.cpu.Creeps;
+})};

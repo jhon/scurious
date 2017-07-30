@@ -22,6 +22,7 @@
 "use strict";
 const resources = require('LispEngineer_resources');
 const cb = require('LispEngineer_callback');
+const profiler = require('screeps-profiler');
 
 global.stats_callbacks = new cb.Callback();
 
@@ -69,6 +70,8 @@ function collect_stats() {
 
     Memory.stats.cpu.used = Game.cpu.getUsed(); // AT END OF MAIN LOOP
 } // collect_stats
+
+collect_stats = profiler.registerFN(collect_stats);
 
 module.exports = {
     collect_stats,

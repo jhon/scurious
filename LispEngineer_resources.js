@@ -1,4 +1,5 @@
 "use strict";
+const profiler = require('screeps-profiler');
 
 // Resources Module handles determining what sort of mode we should be operating in.
 //
@@ -237,6 +238,11 @@ function summarize_room(room) {
 
     return sr[room.name];
 }
+
+count_source_containers = profiler.registerFN(count_source_containers);
+summarize_room_internal = profiler.registerFN(summarize_room_internal);
+summarize_rooms = profiler.registerFN(summarize_rooms);
+summarize_room = profiler.registerFN(summarize_room);
 
 module.exports = {
     summarize_room,
