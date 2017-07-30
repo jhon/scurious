@@ -1,12 +1,10 @@
 ﻿const roleBuilder = require('role.builder');
-const roleExternalHarvester = require('role.external_harvester');
 const utils = require('utils');
 
 module.exports.run = function (creep) {
     // QUICK! START UP THE STATE MACHINE!
     if (creep.memory.harvesting && creep.carry.energy == creep.carryCapacity) {
         creep.memory.harvesting = false;
-        creep.memory.external_harvesting = false;
     }
     if (!creep.memory.harvesting && creep.carry.energy == 0) {
         creep.memory.harvesting = true;
@@ -14,11 +12,7 @@ module.exports.run = function (creep) {
         creep.memory.target_id = null;
     }
 
-    // If we couldn't find local resources and started going external, continue with that
-    if (creep.memory.external_harvesting) {
-        roleExternalHarvester.run(creep);
-    }
-    else if (creep.memory.harvesting) {
+    if (creep.memory.harvesting) {
         // Are their dropped resources? Prioritize those
         let source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
         if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
@@ -28,17 +22,6 @@ module.exports.run = function (creep) {
         // FIXME: the find should filter to see if sources have energy to better handle multi-source rooms
         else if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
-        }
-        // If we found a source but it didn't have any energy...
-        else if (false && source && source.energy == 0) {
-            // If we have obtained over 1/4 our capacity, deposit it somewhere
-            if (creep.carry.energy > creep.carryCapacity / 4) {
-                creep.memory.harvesting = false;
-            }
-            else {
-                creep.memory.external_harvesting = true;
-                roleExternalHarvester.run(creep);
-            }
         }
     }
     // If we're done harvesting and we're outside the room, navigate back

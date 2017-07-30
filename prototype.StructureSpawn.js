@@ -16,7 +16,7 @@ StructureSpawn.prototype.run = function () {
 		let num_harvesters = utils.countCreeps('harvester');
 		let num_builders = utils.countCreeps('builder');
 		let num_upgraders = utils.countCreeps('upgrader');
-		let num_external_harvesters = utils.countCreeps('external_harvester');
+		let num_drones = utils.countCreeps('drone');
 
 		// Crazy default parts
 		//let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
@@ -34,10 +34,10 @@ StructureSpawn.prototype.run = function () {
 		else if (num_upgraders < 2) {
 			utils.spawnCreep(this, 'upgrader', parts, cost);
 		}
-		else if (num_external_harvesters < 12 && Memory.last_external_death + 1200 < Game.time) {
+		else if (num_drones < 12 && Memory.last_external_death + 1200 < Game.time) {
 			parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
 			cost = 2 * 100 + 3 * 50 + 5 * 50;
-			utils.spawnCreep(this, 'external_harvester', parts, cost);
+			utils.spawnCreep(this, 'drone', parts, cost);
 		}
 
 		// If everything is dead (but we still have a spawn for some reason), try to rebuild!

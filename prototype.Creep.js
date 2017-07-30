@@ -1,5 +1,5 @@
 ﻿const roleHarvester = require('role.harvester');
-const roleExternalHarvester = require('role.external_harvester');
+const roleDrone = require('role.drone');
 const roleUpgrader = require('role.upgrader');
 const roleBuilder = require('role.builder');
 const roleDmw = require('role.dmw');
@@ -8,7 +8,7 @@ const DISPATCH_TABLE = {
     'harvester': roleHarvester.run,
     'upgrader': roleUpgrader.run,
     'builder': roleBuilder.run,
-    'external_harvester': roleExternalHarvester.run,
+    'drone': roleDrone.run,
     'dmw': roleDmw.run
 };
 
