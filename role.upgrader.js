@@ -27,9 +27,9 @@ module.exports.run = function (creep) {
             filter: (structure) => {
                 return (structure.structureType === STRUCTURE_CONTAINER ||
                     structure.structureType === STRUCTURE_STORAGE) &&
-                    structure.energy > 0;
+                    structure.store.energy > 0;
             }
-        })) && creep.withdraw(source) == ERR_NOT_IN_RANGE) {
+        })) && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }
