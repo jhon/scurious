@@ -16,20 +16,18 @@ module.exports.run = function (creep) {
         if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#00aaff');
         }
+        
         // Otherwise, go to your normal sources
-        // FIXME: the find should filter to see if sources have energy to better handle multi-source rooms
         else if ((source = utils.findClosest(creep, FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER) && structure.store.energy > 0;
-            }
-        })) && creep.withdraw(source) == ERR_NOT_IN_RANGE) {
+            filter: s => s.structureType === STRUCTURE_CONTAINER && s.store.energy > 0
+        })) && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
         else if ((source = utils.findClosest(creep, FIND_MY_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_STORAGE) && structure.store.energy > 0;
+                return (structure.structureType === STRUCTURE_STORAGE) && structure.store.energy > 0;
             }
-        })) && creep.withdraw(source) == ERR_NOT_IN_RANGE) {
+        })) && creep.withdraw(source, 'energy') == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }
