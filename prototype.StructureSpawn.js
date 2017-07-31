@@ -1,5 +1,40 @@
 ﻿const utils = require('utils');
 
+const CREEP_MAXIMUMS = {
+    'harvester': 3, // Should be 3*NUM_SOURCES
+    'courier': 2,
+    'worker': 4,
+    'upgrader': 2,
+    'drone': 12,
+};
+
+const CREEP_PARTS = {
+    'harvester': [
+        [WORK, WORK, CARRY, MOVE],
+        [WORK, CARRY, MOVE],
+    ],
+    'courier': [
+        
+        [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+        [CARRY, CARRY, MOVE, MOVE],
+    ],
+    'worker': [
+        [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+        [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+    ],
+    'upgrader': [
+        [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+        [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+    ],
+    'drone': [
+        [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
+        [WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
+    ],
+};
+
+function UNIT_COST(a) { return _.sum(a, (x) => BODYPART_COST[x]); }
+
 StructureSpawn.prototype.run = function () {
 	// If we're spawning, put up a thing so we know what is happening
 	if (this.spawning) {
@@ -11,34 +46,20 @@ StructureSpawn.prototype.run = function () {
 			{ align: 'left', opacity: 0.8 });
 	}
 	else {
+        let num_creeps = _.countBy(Memory.creeps, 'role');
 
-		// Grab counts for all the roles
-		let num_harvesters = utils.countCreeps('harvester');
-		let num_workers = utils.countCreeps('worker');
-		let num_upgraders = utils.countCreeps('upgrader');
-		let num_drones = utils.countCreeps('drone');
-
-		// Crazy default parts
-		//let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-		//let parts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
-		let parts = [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
-		let cost = 4 * 100 + 4 * 50 + 4 * 50;
-
-		// Check the balance based on magic numbers that have no basis in reality
-		if (num_harvesters < 6) {
-			utils.spawnCreep(this, 'harvester', parts, cost);
-		}
-		else if (num_workers < 0) {
-			utils.spawnCreep(this, 'worker', parts, cost);
-		}
-		else if (num_upgraders < 2) {
-			utils.spawnCreep(this, 'upgrader', parts, cost);
-		}
-		else if (num_drones < 12 && Memory.last_external_death + 1200 < Game.time) {
-			parts = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
-			cost = 2 * 100 + 3 * 50 + 5 * 50;
-			utils.spawnCreep(this, 'drone', parts, cost);
-		}
+        for (let t in CREEP_MAXIMUMS)
+        {
+            if (num_creeps[t] < CREEP_MAXIMUMS[t])
+            {
+                if (t == 'drone' && Memory.last_external_death + 1200 > Game.time)
+                {
+                    continue;
+                }
+                let parts = _.find(CREEP_PARTS[t], b => UNIT_COST(b) <= this.room.energyCapacityAvailable);
+                utils.spawnCreep(this, t, parts, UNIT_COST(parts));
+            }
+        }
 
 		// If everything is dead (but we still have a spawn for some reason), try to rebuild!
 		if (!this.spawning && Memory.pop_count == 0) {
