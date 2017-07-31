@@ -28,15 +28,6 @@
         return targets[Math.floor(Math.random() * targets.length)];
     },
 
-    // Filter for damaged structure. Used by tower and creep repair
-    findClosestDamagedStructure: function (in_creep)
-    {
-        // Find structures < 100% or roads < 90%
-        return in_creep.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => (structure.structureType!=STRUCTURE_ROAD)?(structure.hits < structure.hitsMax):(structure.hits < structure.hitsMax*0.9)
-        });
-    },
-
     // Easy filter wrapper
     countCreeps: function (in_role)
     {

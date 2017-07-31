@@ -26,9 +26,9 @@ module.exports.run = function (creep) {
     else if (creep.memory.building) {
         let target = null;
         // Let the tower handle repairs if it's here
-        // ASKME: Should the tower be handling all repairs?
-        let tower = creep.room.find(FIND_MY_STRUCTURES, { filter: (structure) => { return structure.structureType === STRUCTURE_TOWER && structure.energy > structure.energyCapacity/2; } });
-        if (tower.length==0 && (target = utils.findClosestDamagedStructure(creep))) {
+        if (target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => structure.structureType!=STRUCTURE_ROAD && structure.hits < structure.hitsMax
+        })) {
             if (creep.repair(target) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, target, '#ffffff');
             }
