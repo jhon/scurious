@@ -4,7 +4,7 @@ const INTERIOR_CREEP_MAXIMUMS = {
     'harvester': 3, // Should be 3*NUM_SOURCES
     'courier': 2,
     'worker': 2,
-    'upgrader': 1,
+    'upgrader': 2,
 };
 const EXTERIOR_CREEP_MAXIMUMS = {
     'soldier': 2,
@@ -48,7 +48,15 @@ const CREEP_PARTS = {
 
 function UNIT_COST(a) { return _.sum(a, (x) => BODYPART_COST[x]); }
 
+function makeName(role, workroom)
+{
+    return `${role}_${workroom}_${Memory.creep_counter}`;
+}
+
 StructureSpawn.prototype.run = function () {
+    if (Memory.creep_counter > 9999) {
+        Memory.creep_counter -= 10000;
+    }
     // If we're spawning, put up a thing so we know what is happening
     if (this.spawning) {
         let spawningCreep = Game.creeps[this.spawning.name];
@@ -65,9 +73,10 @@ StructureSpawn.prototype.run = function () {
         for (let t in INTERIOR_CREEP_MAXIMUMS) {
             if (!num_creeps[t] || num_creeps[t] < INTERIOR_CREEP_MAXIMUMS[t]) {
                 let parts = _.find(CREEP_PARTS[t], b => UNIT_COST(b) <= this.room.energyCapacityAvailable);
-                let name = this.createCreep(parts, undefined, { role: t, cost: UNIT_COST(parts), home: this.room.name, work: this.room.name });
+                let name = this.createCreep(parts, makeName(t,this.room.name), { role: t, cost: UNIT_COST(parts), home: this.room.name, work: this.room.name });
                 if (name != ERR_NOT_ENOUGH_RESOURCES) {
-                    console.log(`Spawning new ${t}: ${name}`)
+                    console.log(`Spawning ${name}`)
+                    Memory.creep_counter++;
                     Memory.pop_count++;
                 }
                 found_match = true;
@@ -79,7 +88,7 @@ StructureSpawn.prototype.run = function () {
     if (!this.spawning && !found_match) {
         // We go by room so we will try to fill out our closest room friends first
         for (let i in Memory.exterior_rooms) {
-            if (Memory.exterior_rooms[i].last_death + 1200 > Game.time) {
+            if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
                 continue;
             }
             for (let t in EXTERIOR_CREEP_MAXIMUMS) {
@@ -87,15 +96,16 @@ StructureSpawn.prototype.run = function () {
                     continue
                 }
                 let parts = _.find(CREEP_PARTS[t], b => UNIT_COST(b) <= this.room.energyCapacityAvailable);
-                let name = this.createCreep(parts, undefined, { role: t, cost: UNIT_COST(parts), home: this.room.name, work: i });
+                let name = this.createCreep(parts, makeName(t,i), { role: t, cost: UNIT_COST(parts), home: this.room.name, work: i });
                 if (name != ERR_NOT_ENOUGH_RESOURCES) {
-                    console.log(`Spawning new ${t}: ${name} for ${i}`)
+                    console.log(`Spawning ${name}`)
                     if (!Memory.exterior_rooms[i].creeps[t]) {
                         Memory.exterior_rooms[i].creeps[t] = [name];
                     }
                     else {
                         Memory.exterior_rooms[i].creeps[t].push(name);
                     }
+                    Memory.creep_counter++;
                     Memory.pop_count++;
                 }
                 found_match = true;
@@ -110,9 +120,10 @@ StructureSpawn.prototype.run = function () {
     // If everything is dead (but we still have a spawn for some reason), try to rebuild!
     if (!this.spawning && Memory.pop_count == 0) {
         let parts = [WORK, CARRY, MOVE, MOVE];
-        let name = this.createCreep(parts, undefined, { role: 'bootstrap', cost: UNIT_COST(parts), home: this.room.name, work: this.room.name });
+        let name = this.createCreep(parts, makeName('bootstrap',this.room.name), { role: 'bootstrap', cost: UNIT_COST(parts), home: this.room.name, work: this.room.name });
         if (name != ERR_NOT_ENOUGH_RESOURCES) {
-            console.log(`Spawning new ${t}: ${name}`)
+            console.log(`Spawning ${name}`)
+            Memory.creep_counter++;
             Memory.pop_count++;
         }
     }
