@@ -44,11 +44,9 @@ module.exports.run = function (creep) {
                     let result = creep.harvest(source);
                     if (result == ERR_NOT_IN_RANGE)
                     {
-                        utils.moveCreepTo(creep, source, '#ffaa00');
-                    }
-                    else if (result == ERR_NO_PATH)
-                    {
-                        creep.memory.source_id = null;
+                        if (utils.moveCreepTo(creep, source, '#ffaa00') == ERR_NO_PATH) {
+                            creep.memory.source_id = null;
+                        }
                     }
                 }
             }
