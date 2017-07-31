@@ -88,9 +88,9 @@ StructureSpawn.prototype.run = function () {
 	if (!this.spawning && !found_match) {
 		// We go by room so we will try to fill out our closest room friends first
 		for (let i in Memory.exterior_rooms) {
-			if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
-				continue;
-			}
+			//if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
+			//	continue;
+			//}
 			for (let t in EXTERIOR_CREEP_MAXIMUMS) {
 				if (Memory.exterior_rooms[i].creeps[t] && Memory.exterior_rooms[i].creeps[t].length >= EXTERIOR_CREEP_MAXIMUMS[t]) {
 					continue
