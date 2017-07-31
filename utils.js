@@ -46,7 +46,7 @@
     // EzSpawn
     spawnCreep: function (in_spawn, in_role, in_parts, in_cost)
     {
-        let new_name = in_spawn.createCreep(in_parts, undefined, { role: in_role, cost:in_cost });
+        let new_name = in_spawn.createCreep(in_parts, undefined, { role: in_role, cost:in_cost, home:in_spawn.room.name });
         if (new_name !== -6) {
             console.log('Spawning new ' + in_role + ': ' + new_name);
             Memory.pop_count++;
