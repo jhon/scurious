@@ -15,7 +15,7 @@ StructureTower.prototype.run = function () {
     //          may be worth it.
     else {
         let closestDamagedStructure = this.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => (structure.structureType != STRUCTURE_ROAD)
+            filter: (structure) => (structure.structureType == STRUCTURE_ROAD && structure.hits < structure.hitsMax * 0.9)
         });
         if (closestDamagedStructure) {
             this.repair(closestDamagedStructure);
