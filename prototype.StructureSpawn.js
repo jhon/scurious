@@ -8,6 +8,7 @@ const INTERIOR_CREEP_MAXIMUMS = {
 };
 const EXTERIOR_CREEP_MAXIMUMS = {
     'princess': 1,
+    'soldier': 2,
 	'drone': 12,
 };
 
@@ -32,6 +33,11 @@ const CREEP_PARTS = {
 	'princess': [
 		[CLAIM, CLAIM, MOVE, MOVE],
 		[CLAIM, MOVE],
+    ],
+    'solider': [
+        [ATTACK, ATTACK, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE],
+        [ATTACK, TOUGH, TOUGH, MOVE, MOVE, MOVE],
+        [ATTACK, MOVE],
     ],
 	'drone': [
 		[WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
