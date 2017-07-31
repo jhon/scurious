@@ -71,8 +71,9 @@ Creep.prototype.run = function ()
     } catch (e) {
             console.log(e.message);
     }
-
-    roleRunner.run(this);
+    if (roleRunner) {
+        roleRunner.run(this);
+    }
 
     this.memory.last_pos = new RoomPosition(this.pos.x, this.pos.y, this.room.name);
 }
