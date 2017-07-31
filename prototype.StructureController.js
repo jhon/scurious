@@ -99,6 +99,22 @@ function createRoomPlan(controller, structures) {
     }
 }
 
+function printStatistics(controller,adjacent_rooms)
+{
+    let rv = new RoomVisual(controller.room.name);
+    let creeps = _.groupBy(Memory.creeps, 'work');
+    rv.text(controller.room.name + ": " + JSON.stringify(_.countBy(creeps[controller.room.name], 'role')), 0, 0, { align: 'left' });
+    
+    let y = 1;
+    for (let i in adjacent_rooms) {
+        let r = adjacent_rooms[i];
+        let last_death = Memory.exterior_rooms[r].last_death + 600 - Game.time;
+        rv.text(r + ": " + JSON.stringify(_.countBy(creeps[r],'role')) + " " + (last_death>0?last_death:0), 0, y, { align: 'left' });
+        y += 1;
+    }
+    
+}
+
 StructureController.prototype.run = function () {
     this.memory = Memory.controllers[this.room.name];
     if (!this.memory) {
@@ -127,6 +143,9 @@ StructureController.prototype.run = function () {
             Memory.exterior_rooms[e] = { creeps: {}};
         }
     }
+    _.remove(adjacent_rooms, x => x == this.room.name);
+
+    printStatistics(this,adjacent_rooms);
 
     let structures = this.room.find(FIND_STRUCTURES);
 
