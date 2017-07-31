@@ -88,7 +88,15 @@ StructureSpawn.prototype.run = function () {
 
 	if (!this.spawning && !found_match) {
 		// We go by room so we will try to fill out our closest room friends first
-		for (let i in Memory.exterior_rooms) {
+        let num_spawns = this.room.find(FIND_MY_SPAWNS).length;
+        let counter = 0;
+        for (let i in Memory.exterior_rooms) {
+            // Only supply 2 rooms worth of duderinos unless we have 2 spawns
+            if (counter >= 2 && num_spawns < 2)
+            {
+                break;
+            }
+            counter++;
 			//if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
 			//	continue;
 			//}
