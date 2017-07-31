@@ -1,11 +1,8 @@
 ﻿const utils = require('utils');
 
-const EXTERNAL_ROOM = 'W5N8';
-const EXTERNAL_ROOM_POS = new RoomPosition(47, 33, EXTERNAL_ROOM);
-
 module.exports.run = function (creep) {
-    if (creep.room.name != EXTERNAL_ROOM) {
-        utils.moveCreepTo(creep, EXTERNAL_ROOM_POS, '#0000aa');
+    if (creep.room.name != creep.memory.work) {
+        utils.moveCreepTo(creep, new RoomPosition(25,25,creep.memory.work), '#0000aa');
     }
     else if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE)
     {

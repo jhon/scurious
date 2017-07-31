@@ -1,8 +1,5 @@
 ﻿const utils = require('utils');
 
-const EXTERNAL_ROOM = 'W5N8';
-const EXTERNAL_ROOM_POS = new RoomPosition(47, 33, EXTERNAL_ROOM);
-
 module.exports.run = function (creep) {
     // QUICK! START UP THE STATE MACHINE!
     if (creep.memory.harvesting && creep.carry.energy == creep.carryCapacity) {
@@ -28,8 +25,8 @@ module.exports.run = function (creep) {
             //   defined above, navigate to a hard coded point. We don't use the
             //   flag because if we don't have a presence in that room we can't get
             //   the flag's position and I'm multirooming with a GCL of 1 right now
-            if (creep.room.name != EXTERNAL_ROOM) {
-                utils.moveCreepTo(creep, EXTERNAL_ROOM_POS, '#ffaa00');
+            if (creep.room.name != creep.memory.work) {
+                utils.moveCreepTo(creep, new RoomPosition(25,25,creep.memory.work), '#ffaa00');
             }
             else {
                 // Once we're in the hardcoded room, go to the source we always go to

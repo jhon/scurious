@@ -110,6 +110,24 @@ StructureController.prototype.run = function () {
         return;
     }
 
+    // Map out the surrounding rooms
+    let adjacent_rooms = _.values(Game.map.describeExits(this.room.name));
+    let exterior_rooms = _.map(adjacent_rooms, x => _.values(Game.map.describeExits(x)));
+    for (let i in exterior_rooms)
+    {
+        adjacent_rooms = adjacent_rooms.concat(exterior_rooms[i]);
+    }
+    if (!Memory.exterior_rooms)
+    {
+        Memory.exterior_rooms = {};
+    }
+    for (let i in adjacent_rooms) {
+        let e = adjacent_rooms[i];
+        if (!Memory.exterior_rooms[e]) {
+            Memory.exterior_rooms[e] = { creeps: {}};
+        }
+    }
+
     let structures = this.room.find(FIND_STRUCTURES);
 
     if (this.memory.level != this.level || structures.length != this.memory.numStructures)

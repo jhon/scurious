@@ -15,8 +15,14 @@ module.exports.loop = function () { profiler.wrap(function() {
         if (!Game.creeps[name]) {
             delete Memory.creeps[name]._move; // Trim _move
             console.log('delete Memory.creeps["' + name + '"] = ' + JSON.stringify(Memory.creeps[name]));
-            if (Memory.creeps[name].ttl > 1 && !(Memory.creeps[name].last_pos.roomName in Game.rooms)) {
-                Memory.last_external_death = Game.time;
+            if (Memory.creeps[name].ttl > 1 && _.contains(Memory.exterior_rooms, Memory.creeps[name].last_pos.roomName))
+            {
+                Memory.exterior_rooms[Memory.creeps[name].last_pos.roomName].last_death = Game.time;
+                if (_.contains(Memory.exterior_rooms, Memory.creeps[name].work))
+                {
+                    _.remove(Memory.exterior_rooms[Memory.creeps[name].work].creeps[Memory.creeps[name].role],
+                        x => x == name);
+                }
             }
             delete Memory.creeps[name];
             Memory.pop_count--;
