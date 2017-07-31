@@ -11,6 +11,9 @@ function createRoomPlan(controller, structures) {
     _.each(structures, function (s) {
         if (s.structureType === STRUCTURE_ROAD) {
             cost_matrix.set(s.pos.x, s.pos.y, 1);
+        } else if (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_RAMPART) {
+            cost_matrix.set(s.pos.x, s.pos.y, 0xff);
+            structure_goals.push({ pos: s.pos, range: 1 });
         } else {
             cost_matrix.set(s.pos.x, s.pos.y, 0xff);
             structure_goals.push({ pos: s.pos, range: 2 });
@@ -67,7 +70,7 @@ StructureController.prototype.run = function () {
         return;
     }
 
-    let structures = this.room.find(FIND_MY_STRUCTURES);
+    let structures = this.room.find(FIND_STRUCTURES);
 
     if (this.memory.level != this.level || structures.length != this.memory.numStructures)
     {
