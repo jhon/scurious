@@ -35,12 +35,21 @@ module.exports.run = function (creep) {
                 // Once we're in the hardcoded room, go to the source we always go to
                 //   (or find it if we haven't been there yet)
                 source = Game.getObjectById(creep.memory.source_id);
-                if (!source) {
+                if (!source || source.energy == 0) {
                     source = utils.findRandom(creep, FIND_SOURCES);
                     if (source) creep.memory.source_id = source.id;
                 }
-                if (source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    utils.moveCreepTo(creep, source, '#ffaa00');
+                if (source)
+                {
+                    let result = creep.harvest(source);
+                    if (result == ERR_NOT_IN_RANGE)
+                    {
+                        utils.moveCreepTo(creep, source, '#ffaa00');
+                    }
+                    else if (result == ERR_NO_PATH)
+                    {
+                        creep.memory.source_id = null;
+                    }
                 }
             }
         }
@@ -56,6 +65,17 @@ module.exports.run = function (creep) {
             let target = Game.getObjectById(creep.memory.target_id);
             // If that target doesn't/no longer exists or it's now full, find a new target
             //   and save off its id
+            if (creep.room.find(FIND_HOSTILE_CREEPS).length) {
+                // If there are hostiles, hit the tower first
+                if (!target || target.energy == target.energyCapacity) {
+                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                        }
+                    });
+                    if (target) creep.memory.target_id = target.id;
+                }
+            }
             if (!target || target.energy == target.energyCapacity) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
