@@ -91,7 +91,7 @@ module.exports.run = function (creep) {
             if (!target || target.energy == target.energyCapacity) {
                 target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_STORAGE) && structure.energy < structure.energyCapacity;
+                        return (structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] < structure.storeCapacity;
                     }
                 });
                 if (target) creep.memory.target_id = target.id;

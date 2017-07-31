@@ -74,7 +74,7 @@ module.exports.run = function (creep) {
             filter: (structure) => {
                 return (structure.structureType === STRUCTURE_CONTAINER ||
                     structure.structureType === STRUCTURE_STORAGE) &&
-                    structure.store.energy > 0;
+                    structure.store[RESOURCE_ENERGY] > 0;
             }
         });
         if (source)

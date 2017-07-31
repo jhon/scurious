@@ -25,7 +25,7 @@ module.exports.run = function (creep) {
         }
         else if ((source = utils.findClosest(creep, FIND_MY_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType === STRUCTURE_STORAGE) && structure.store.energy > 0;
+                return (structure.structureType === STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] > 0;
             }
         })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
@@ -60,7 +60,7 @@ module.exports.run = function (creep) {
         if (!target || target.energy == target.energyCapacity) {
             target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_STORAGE) && structure.energy < structure.energyCapacity;
+                    return (structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] < structure.storeCapacity;
                 }
             });
             if (target) creep.memory.target_id = target.id;
