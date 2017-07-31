@@ -1,7 +1,14 @@
 ﻿const utils = require('utils');
 
-const MAX_EXTENSIONS = [0, 0, 5, 10, 20, 30, 40, 50, 60];
+const MAX_SPAWNS = [0, 1, 1, 1, 1, 1, 1, 2, 2];
 const MAX_STORAGE = [0, 0, 0, 0, 1, 1, 1, 1, 1];
+const MAX_EXTENSIONS = [0, 0, 5, 10, 20, 30, 40, 50, 60];
+
+function countBuildings(type, structures, sites)
+{
+    (type in structures) ? structures[type].length : 0 +
+        (type in sites) ? sites[type].length : 0;
+}
 
 function createRoomPlan(controller, structures) {
     let construction_sites = controller.room.find(FIND_MY_CONSTRUCTION_SITES);
@@ -38,15 +45,28 @@ function createRoomPlan(controller, structures) {
 
     let grouped_structures = _.groupBy(structures, 'structureType');
     let grouped_sites = _.groupBy(construction_sites, 'structureType');
-    
+
+    //
+    // CONSTRUCT ADDITIONAL SPAWNS
+    //
+    if (controller.my && grouped_structures[STRUCTURE_SPAWN].length != 0) {
+        let spawn = grouped_structures[STRUCTURE_SPAWN][0];
+        let num_spawns = countBuildings(STRUCTURE_SPAWN, grouped_structures, grouped_sites);
+        if (num_spawns < MAX_SPAWNS[controller.level]) {
+            let path = PathFinder.search(spawn.pos, structure_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
+            if (path.path.length != 0 && !path.incomplete) {
+                controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_SPAWN);
+                return;
+            }
+        }
+    }
+
     //
     // CONSTRUCT STORAGE
     //
-    if (controller.my && grouped_structures[STRUCTURE_SPAWN].length != 0)
-    {
+    if (controller.my && grouped_structures[STRUCTURE_SPAWN].length != 0) {
         let spawn = grouped_structures[STRUCTURE_SPAWN][0];
-        let num_storage = (STRUCTURE_STORAGE in grouped_structures) ? grouped_structures[STRUCTURE_STORAGE].length : 0 +
-            (STRUCTURE_STORAGE in grouped_sites) ? grouped_sites[STRUCTURE_STORAGE].length : 0;
+        let num_storage = countBuildings(STRUCTURE_STORAGE, grouped_structures, grouped_sites);
         if (num_storage < MAX_STORAGE[controller.level]) {
             let path = PathFinder.search(spawn.pos, structure_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
             if (path.path.length != 0 && !path.incomplete) {
@@ -59,16 +79,12 @@ function createRoomPlan(controller, structures) {
     //
     // CONSTRUCT EXTENSIONS
     //
-    if (controller.my && grouped_structures[STRUCTURE_SPAWN].length != 0)
-    {
+    if (controller.my && grouped_structures[STRUCTURE_SPAWN].length != 0) {
         let spawn = grouped_structures[STRUCTURE_SPAWN][0];
-        let num_extensions = (STRUCTURE_EXTENSION in grouped_structures) ? grouped_structures[STRUCTURE_EXTENSION].length : 0 +
-            (STRUCTURE_EXTENSION in grouped_sites) ? grouped_sites[STRUCTURE_EXTENSION].length : 0;
-        if (num_extensions < MAX_EXTENSIONS[controller.level])
-        {
+        let num_extensions = countBuildings(STRUCTURE_EXTENSION, grouped_structures, grouped_sites);
+        if (num_extensions < MAX_EXTENSIONS[controller.level]) {
             let path = PathFinder.search(spawn.pos, structure_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
-            if (path.path.length != 0 && !path.incomplete)
-            {
+            if (path.path.length != 0 && !path.incomplete) {
                 controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_EXTENSION);
                 return;
             }
