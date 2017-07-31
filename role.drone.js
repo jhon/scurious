@@ -1,5 +1,4 @@
-﻿
-const utils = require('utils');
+﻿const utils = require('utils');
 
 const EXTERNAL_ROOM = 'W5N8';
 const EXTERNAL_ROOM_POS = new RoomPosition(47, 33, EXTERNAL_ROOM);
@@ -70,6 +69,14 @@ module.exports.run = function (creep) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    }
+                });
+                if (target) creep.memory.target_id = target.id;
+            }
+            if (!target || target.energy == target.energyCapacity) {
+                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_STORAGE) && structure.energy < structure.energyCapacity;
                     }
                 });
                 if (target) creep.memory.target_id = target.id;

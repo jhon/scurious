@@ -69,9 +69,19 @@ module.exports.run = function (creep) {
         }
     }
     else {
-        // Harvest from sources... poorly...
-        let source = utils.findClosest(creep, FIND_SOURCES);
-        if (source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
+        // Grab energy from containers / storage
+        let source = utils.findClosest(creep, FIND_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType === STRUCTURE_CONTAINER ||
+                    structure.structureType === STRUCTURE_STORAGE) &&
+                    structure.store.energy > 0;
+            }
+        });
+        if (source)
+        {
+            creep.memory.source_id = source.id;
+        }
+        if (source && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }

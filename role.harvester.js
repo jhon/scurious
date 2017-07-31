@@ -13,12 +13,9 @@ module.exports.run = function (creep) {
     if (creep.memory.harvesting) {
         // Are their dropped resources? Prioritize those
         let source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
-        if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(creep, source, '#00aaff');
-        }
         // Otherwise, go to your normal sources
         // FIXME: the find should filter to see if sources have energy to better handle multi-source rooms
-        else if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
+        if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }
@@ -34,16 +31,7 @@ module.exports.run = function (creep) {
         if (!target || target.energy == target.energyCapacity) {
             target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_EXTENSION ||
-                        structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
-                }
-            });
-            if (target) creep.memory.target_id = target.id;
-        }
-        if (!target || target.energy == target.energyCapacity) {
-            target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    return (structure.structureType == STRUCTURE_CONTAINER) && structure.store.energy < structure.storeCapacity;
                 }
             });
             if (target) creep.memory.target_id = target.id;

@@ -9,11 +9,11 @@
     //   This can mean that creeps are blocking it. Some of this code
     //   wants to latch on to a destination even if we cannot path there.
     // This helper does that
-    findClosest: function (in_creep, in_what)
+    findClosest: function (in_creep, in_what, in_filter = undefined)
     {
-        let target = in_creep.pos.findClosestByPath(in_what);
+        let target = in_creep.pos.findClosestByPath(in_what, in_filter);
         if (!target)
-            target = in_creep.pos.findClosestByRange(in_what);
+            target = in_creep.pos.findClosestByRange(in_what, in_filter);
         return target;
     },
 
