@@ -81,7 +81,7 @@ module.exports.run = function (creep) {
         {
             creep.memory.source_id = source.id;
         }
-        if (source && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
+        if (source && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }

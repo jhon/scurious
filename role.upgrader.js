@@ -29,7 +29,7 @@ module.exports.run = function (creep) {
                     structure.structureType === STRUCTURE_STORAGE) &&
                     structure.store.energy > 0;
             }
-        })) && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
+        })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }

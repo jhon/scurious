@@ -20,14 +20,14 @@ module.exports.run = function (creep) {
         // Otherwise, go to your normal sources
         else if ((source = utils.findClosest(creep, FIND_STRUCTURES, {
             filter: s => s.structureType === STRUCTURE_CONTAINER && s.store.energy > 0
-        })) && creep.withdraw(source,'energy') == ERR_NOT_IN_RANGE) {
+        })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
         else if ((source = utils.findClosest(creep, FIND_MY_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType === STRUCTURE_STORAGE) && structure.store.energy > 0;
             }
-        })) && creep.withdraw(source, 'energy') == ERR_NOT_IN_RANGE) {
+        })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }
