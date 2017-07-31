@@ -9,16 +9,15 @@ const profiler = require('screeps-profiler');
 profiler.enable();
 
 module.exports.loop = function () { profiler.wrap(function() {
-
     // Clean up creep memory for creeps we don't have any more :(
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
             delete Memory.creeps[name]._move; // Trim _move
             console.log('delete Memory.creeps["' + name + '"] = ' + JSON.stringify(Memory.creeps[name]));
-            if (Memory.creeps[name].ttl > 1 && _.contains(Memory.exterior_rooms, Memory.creeps[name].last_pos.roomName))
+            if (Memory.creeps[name].ttl > 1 && Memory.creeps[name].last_pos.roomName in Memory.exterior_rooms)
             {
                 Memory.exterior_rooms[Memory.creeps[name].last_pos.roomName].last_death = Game.time;
-                if (_.contains(Memory.exterior_rooms, Memory.creeps[name].work))
+                if (Memory.creeps[name].work in Memory.exterior_rooms)
                 {
                     _.remove(Memory.exterior_rooms[Memory.creeps[name].work].creeps[Memory.creeps[name].role],
                         x => x == name);

@@ -50,6 +50,10 @@ Creep.prototype.run = function ()
             (!parts.claim && part_max.claim) ||
             !parts.move);
         if (force_suicide || this.memory.ttl < 50) {
+            if (this.memory.work in Memory.exterior_rooms) {
+                _.remove(Memory.exterior_rooms[this.memory.work].creeps[this.memory.role],
+                    x => x == this.name);
+            }
             if (force_suicide || !this.isWorthRecycling(10, 25)) {
                 console.log(`Euthanizing ${this.memory.role} ${this.name}`);
                 this.memory.role_in_life = this.memory.role;
