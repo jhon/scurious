@@ -4,12 +4,12 @@ const INTERIOR_CREEP_MAXIMUMS = {
     'harvester': 3, // Should be 3*NUM_SOURCES
     'courier': 2,
     'worker': 2,
-    'upgrader': 2,
+    'upgrader': 1,
 };
 const EXTERIOR_CREEP_MAXIMUMS = {
     'soldier': 2,
     'princess': 1,
-	'drone': 12,
+    'drone': 12, // Should be broken into harvesters and couriers
 };
 
 const CREEP_PARTS = {
