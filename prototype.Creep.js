@@ -1,18 +1,4 @@
-﻿const roleHarvester = require('role.harvester');
-const roleDrone = require('role.drone');
-const roleUpgrader = require('role.upgrader');
-const roleWorker = require('role.worker');
-const roleDmw = require('role.dmw');
-
-const DISPATCH_TABLE = {
-    'harvester': roleHarvester.run,
-    'upgrader': roleUpgrader.run,
-    'worker': roleWorker.run,
-    'drone': roleDrone.run,
-    'dmw': roleDmw.run
-};
-
-Creep.prototype.recycle = function () {
+﻿Creep.prototype.recycle = function () {
     console.log(`Recycling ${this.memory.role} ${this.name}`);
     this.memory.role_in_life = this.memory.role;
     this.memory.role = "dmw";
@@ -73,9 +59,25 @@ Creep.prototype.run = function ()
         }
     }
 
-    if (this.memory.role in DISPATCH_TABLE) {
-        DISPATCH_TABLE[this.memory.role](this);
+    // Try to automatically include the module
+    // ASKME: Is it better to do this or to have not hacked the roles
+    //   to handle the euthanized role?
+    let roleRunner = null;
+    try {
+        roleRunner = require('role.' + this.memory.role);
+    } catch (e) {
+        // Rethrow if we got any eror besides not finding the module
+        if (e.code !== 'MODULE_NOT_FOUND')
+        {
+            throw e;
+        }
+        else
+        {
+            console.log(e.message);
+        }
     }
+
+    roleRunner.run(this);
 
     this.memory.last_pos = new RoomPosition(this.pos.x, this.pos.y, this.room.name);
 }
