@@ -42,7 +42,6 @@ function createRoomPlan(controller, structures) {
         _.each(grouped_sites[STRUCTURE_CONTAINER], (x) => goals.push({ pos: x.pos, range: 0 }));
 
         let containers_per_source = Math.floor(5 / sources.length);
-        console.log(containers_per_source);
 
         _.each(sources, function (s) {
             let nearby_containers = _.filter(goals, (x) => utils.calcDist(s.pos, x.pos) < 2);
@@ -72,7 +71,9 @@ StructureController.prototype.run = function () {
 
     if (this.memory.level != this.level || structures.length != this.memory.numStructures)
     {
-        createRoomPlan(this,structures);
+        createRoomPlan(this, structures);
+        this.memory.level = this.level;
+        this.memory.numStructures = structures.length;
     }
 
 }
