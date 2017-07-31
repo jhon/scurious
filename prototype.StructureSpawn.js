@@ -58,7 +58,7 @@ StructureSpawn.prototype.run = function () {
         {
             if (!num_creeps[t] || num_creeps[t] < CREEP_MAXIMUMS[t])
             {
-                if (t in EXTERNAL_ROLES && Memory.last_external_death + 1200 > Game.time)
+                if (_.contains(EXTERNAL_ROLES,t) && Memory.last_external_death + 1200 > Game.time)
                 {
                     continue;
                 }
@@ -70,7 +70,7 @@ StructureSpawn.prototype.run = function () {
 
 		// If everything is dead (but we still have a spawn for some reason), try to rebuild!
 		if (!this.spawning && Memory.pop_count == 0) {
-			utils.spawnCreep(this, 'harvester', [WORK, CARRY, MOVE, MOVE], 250);
+			utils.spawnCreep(this, 'bootstrap', [WORK, CARRY, MOVE, MOVE], 250);
 		}
 	}
 }
