@@ -5,8 +5,10 @@ const CREEP_MAXIMUMS = {
     'courier': 2,
     'worker': 4,
     'upgrader': 2,
+    'princess': 1,
     'drone': 12,
 };
+const EXTERNAL_ROLES = ['princess', 'drone'];
 
 const CREEP_PARTS = {
     'harvester': [
@@ -25,6 +27,10 @@ const CREEP_PARTS = {
     'upgrader': [
         [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
         [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+    ],
+    'princess': [
+        [CLAIM, CLAIM, MOVE, MOVE],
+        [CLAIM, MOVE],
     ],
     'drone': [
         [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
@@ -52,12 +58,13 @@ StructureSpawn.prototype.run = function () {
         {
             if (!num_creeps[t] || num_creeps[t] < CREEP_MAXIMUMS[t])
             {
-                if (t == 'drone' && Memory.last_external_death + 1200 > Game.time)
+                if (t in EXTERNAL_ROLES && Memory.last_external_death + 1200 > Game.time)
                 {
                     continue;
                 }
                 let parts = _.find(CREEP_PARTS[t], b => UNIT_COST(b) <= this.room.energyCapacityAvailable);
                 utils.spawnCreep(this, t, parts, UNIT_COST(parts));
+                break;
             }
         }
 

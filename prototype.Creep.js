@@ -45,7 +45,10 @@ Creep.prototype.run = function ()
         // If the creep can't work or move or if it isn't worth keeping around: kill it off
         let parts = _.countBy(_.filter(this.body, (x) => x.hits != 0), "type");
         let part_max = _.countBy(this.body, 'type');
-        let force_suicide = ((!parts.work && part_max.work) || !parts.carry || !parts.move);
+        let force_suicide = ((!parts.work && part_max.work) ||
+            (!parts.carry && part_max.carry) ||
+            (!parts.claim && part_max.claim) ||
+            !parts.move);
         if (force_suicide || this.memory.ttl < 50) {
             if (force_suicide || !this.isWorthRecycling(10, 25)) {
                 console.log(`Euthanizing ${this.memory.role} ${this.name}`);
@@ -66,15 +69,7 @@ Creep.prototype.run = function ()
     try {
         roleRunner = require('role.' + this.memory.role);
     } catch (e) {
-        // Rethrow if we got any eror besides not finding the module
-        if (e.code !== 'MODULE_NOT_FOUND')
-        {
-            throw e;
-        }
-        else
-        {
             console.log(e.message);
-        }
     }
 
     roleRunner.run(this);
