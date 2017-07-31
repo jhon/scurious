@@ -50,7 +50,7 @@ StructureSpawn.prototype.run = function () {
 
         for (let t in CREEP_MAXIMUMS)
         {
-            if (num_creeps[t] < CREEP_MAXIMUMS[t])
+            if (!num_creeps[t] || num_creeps[t] < CREEP_MAXIMUMS[t])
             {
                 if (t == 'drone' && Memory.last_external_death + 1200 > Game.time)
                 {

@@ -58,7 +58,8 @@ Creep.prototype.run = function ()
     if (this.memory.role != 'dmw') {
         // If the creep can't work or move or if it isn't worth keeping around: kill it off
         let parts = _.countBy(_.filter(this.body, (x) => x.hits != 0), "type");
-        let force_suicide = (!parts.work || !parts.carry || !parts.move);
+        let part_max = _.countBy(this.body, 'type');
+        let force_suicide = ((!parts.work && part_max.work) || !parts.carry || !parts.move);
         if (force_suicide || this.memory.ttl < 50) {
             if (force_suicide || !this.isWorthRecycling(10, 25)) {
                 console.log(`Euthanizing ${this.memory.role} ${this.name}`);
