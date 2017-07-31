@@ -1,4 +1,5 @@
 require('prototype.Structure');
+require('prototype.StructureController');
 require('prototype.StructureSpawn');
 require('prototype.StructureTower');
 require('prototype.Creep');
@@ -25,16 +26,12 @@ module.exports.loop = function () { profiler.wrap(function() {
     // Record Start time for teh stats
     Memory.cpu_stats = { Start: Game.cpu.getUsed() };
 
-    for (let room in Game.rooms)
-    {
-        let structures = Game.rooms[room].find(FIND_MY_STRUCTURES);
-        _.each(structures, (x) => x.run());
-    }
+    _.invoke(Game.structures, 'run');
 
     Memory.cpu_stats.Structures = Game.cpu.getUsed() - Memory.cpu_stats.Start;
     
     // RUN ALL THE THINGS!
-    _.each(Game.creeps, (x) => x.run());
+    _.invoke(Game.creeps, 'run');
 
     Memory.cpu_stats.Creeps = Game.cpu.getUsed() - Memory.cpu_stats.Structures;
 
