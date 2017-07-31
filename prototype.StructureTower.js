@@ -14,7 +14,9 @@ StructureTower.prototype.run = function () {
     //          optimal it's probably worth it. If no creeps are nearby the low end
     //          may be worth it.
     else {
-        let closestDamagedStructure = utils.findClosestDamagedStructure(this);
+        let closestDamagedStructure = this.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => (structure.structureType != STRUCTURE_ROAD)
+        });
         if (closestDamagedStructure) {
             this.repair(closestDamagedStructure);
         }
