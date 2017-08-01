@@ -12,9 +12,12 @@ module.exports.run = function (creep) {
 
     if (creep.memory.harvesting) {
         // FIXME: This doesn't handle multi-source rooms
-        let source = null;
-        if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(creep, source, '#ffaa00');
+        let source = utils.findClosest(creep, FIND_SOURCES);
+        if (source) {
+            let result = creep.harvest(source);
+            if (result == ERR_NOT_IN_RANGE || result == ERR_NOT_ENOUGH_RESOURCES) {
+                utils.moveCreepTo(creep, source, '#ffaa00');
+            }
         }
     }
     // If we're done harvesting and we're outside the room, navigate back
