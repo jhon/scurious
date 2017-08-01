@@ -10,6 +10,19 @@ const profiler = require('screeps-profiler');
 profiler.enable();
 
 module.exports.loop = function () { profiler.wrap(function() {
+
+    // Make sure a controlled room isn't in the exterior_rooms data structure
+    /*
+    for (let r in Memory.exterior_rooms)
+    {
+        if (Game.rooms[r] && Game.rooms[r].controller.my && Game.rooms[r].controller.level != 0)
+        {
+            console.log(`Removing ${r}`);
+            delete Memory.exterior_rooms[r];
+        }
+    }
+    */
+
     // Clean up creep memory for creeps we don't have any more :(
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
