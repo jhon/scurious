@@ -7,13 +7,13 @@ const MAX_LINKS = [0, 0, 0, 0, 0, 2, 3, 4, 6];
 
 function countBuildings(type, structures, sites)
 {
-    return (type in structures) ? structures[type].length : 0 +
-        (type in sites) ? sites[type].length : 0;
+    return ((type in structures) ? structures[type].length : 0) +
+        ((type in sites) ? sites[type].length : 0);
 }
 
 function createRoomPlan(controller, structures) {
     let construction_sites = controller.room.find(FIND_MY_CONSTRUCTION_SITES);
-    if (construction_sites.length >= 2) {
+    if (construction_sites.length >= 1) {
         return;
     }
 
@@ -62,7 +62,7 @@ function createRoomPlan(controller, structures) {
             }
         }
     }
-
+    
     //
     // CONSTRUCT LINKS
     //
@@ -128,7 +128,7 @@ function createRoomPlan(controller, structures) {
         }
         // Is there one within 1 unit of a spawn?
         {
-            let nearby_links = _.filter(links, x => utils.calcDist(grouped_structures[STRUCTURE_SPAWN][0].pos, x.pos) < 2);
+            let nearby_links = _.filter(links, x => x && utils.calcDist(grouped_structures[STRUCTURE_SPAWN][0].pos, x.pos) < 2);
             if (nearby_links.length < 1) {
                 let link_goals = _.map(structure_goals, function (x) { return { pos: x.pos, range: 1 }; });
                 let path = PathFinder.search(grouped_structures[STRUCTURE_SPAWN][0].pos, link_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
@@ -234,13 +234,13 @@ StructureController.prototype.run = function () {
     {
         Memory.exterior_rooms = {};
     }
+    _.remove(adjacent_rooms, x => x == this.room.name);
     for (let i in adjacent_rooms) {
         let e = adjacent_rooms[i];
         if (!Memory.exterior_rooms[e]) {
             Memory.exterior_rooms[e] = { creeps: {}};
         }
     }
-    _.remove(adjacent_rooms, x => x == this.room.name);
 
     printStatistics(this,adjacent_rooms);
 
