@@ -70,7 +70,7 @@ StructureSpawn.prototype.run = function () {
 	}
 	let found_match = false;
 	if (!this.spawning) {
-		let num_creeps = _.countBy(Memory.creeps, 'role');
+		let num_creeps = _.countBy(_.filter(Memory.creeps, x => x.ttl > 25), 'role');
 
 		for (let t in INTERIOR_CREEP_MAXIMUMS) {
 			if (!num_creeps[t] || num_creeps[t] < INTERIOR_CREEP_MAXIMUMS[t]) {
@@ -90,6 +90,7 @@ StructureSpawn.prototype.run = function () {
 	if (!this.spawning && !found_match) {
 		// We go by room so we will try to fill out our closest room friends first
 		let num_spawns = this.room.find(FIND_MY_SPAWNS).length;
+		let exterior_creeps = _.groupBy(Memory.creeps, 'work');
 		let counter = 0;
 		for (let i in Memory.exterior_rooms) {
 			// Only supply 2 rooms worth of duderinos unless we have 2 spawns
@@ -101,10 +102,12 @@ StructureSpawn.prototype.run = function () {
 			//if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
 			//	continue;
 			//}
+			let room_creeps = _.countBy(_.filter(exterior_creeps[i], x => x.ttl > 25), 'role');
 			for (let t in EXTERIOR_CREEP_MAXIMUMS) {
-				if (Memory.exterior_rooms[i].creeps[t] && Memory.exterior_rooms[i].creeps[t].length >= EXTERIOR_CREEP_MAXIMUMS[t]) {
-					continue
+				if (room_creeps[t] && room_creeps[t] >= EXTERIOR_CREEP_MAXIMUMS[t]) {
+					continue;
 				}
+				
 				let parts = _.find(CREEP_PARTS[t], b => UNIT_COST(b) <= this.room.energyCapacityAvailable);
 				let name = this.createCreep(parts, makeName(t,i), { role: t, cost: UNIT_COST(parts), home: this.room.name, work: i });
 				if (name != ERR_NOT_ENOUGH_RESOURCES) {
