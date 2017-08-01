@@ -46,6 +46,11 @@ module.exports.run = function (creep) {
             });
         }
 
+        if (source)
+        {
+            creep.memory.source_id = source.id;
+        }
+
         // Grab energy from containers / storage
         if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
