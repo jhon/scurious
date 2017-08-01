@@ -11,10 +11,8 @@ module.exports.run = function (creep) {
     }
 
     if (creep.memory.harvesting) {
-        // Are their dropped resources? Prioritize those
-        let source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
-        // Otherwise, go to your normal sources
-        // FIXME: the find should filter to see if sources have energy to better handle multi-source rooms
+        // FIXME: This doesn't handle multi-source rooms
+        let source = null;
         if ((source = utils.findClosest(creep, FIND_SOURCES)) && creep.harvest(source) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
@@ -26,6 +24,15 @@ module.exports.run = function (creep) {
     else {
         // Get our stored target
         let target = Game.getObjectById(creep.memory.target_id);
+        // If there is a link within 1 square of us, drop our energy there instead
+        if (target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: function (s) {
+                return (s.structureType == STRUCTURE_LINK && s.energy < s.energyCapacity && utils.calcDist(s.pos, creep.pos) == 1);
+            }
+            }))
+        {
+            creep.memory.target_id = target.id;
+        }
         // If that target doesn't exist or someone else got their first,
         //   find a new target and save off its id
         if (!target || target.energy == target.energyCapacity) {
