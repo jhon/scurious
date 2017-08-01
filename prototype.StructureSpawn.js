@@ -3,7 +3,7 @@
 const INTERIOR_CREEP_MAXIMUMS = {
 	'harvester': 3, // Should be 3*NUM_SOURCES
 	'courier': 2,
-	'worker': 2,
+	'worker': 1,
 	'upgrader': 1,
 };
 const EXTERIOR_CREEP_MAXIMUMS = {
