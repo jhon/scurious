@@ -32,7 +32,7 @@ module.exports.run = function (creep) {
         }
         let hostile = Game.getObjectById(creep.memory.hostile_id);
         if (!hostile) {
-            hostile = hostiles[_.random(hostiles.length)];
+            hostile = hostiles[_.random(hostiles.length)-1];
             creep.memory.hostile_id = hostile.id;
         }
 
