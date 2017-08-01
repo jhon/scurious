@@ -25,37 +25,54 @@ module.exports.run = function (creep) {
     // Builder, start building!
     else if (creep.memory.building) {
         let target = null;
-        // Let the tower handle repairs if it's here
-        if (target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => structure.structureType!=STRUCTURE_ROAD && structure.hits < structure.hitsMax
-        })) {
-            if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-                utils.moveCreepTo(creep, target, '#ffffff');
-            }
-        }
 
+        // Preferably repair buildings
+        if (!target)
+        {
+            target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => structure.structureType != STRUCTURE_ROAD && structure.hits < structure.hitsMax
+            });
+        }
+        // Then roads < 80%
+        if (!target)
+        {
+            target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => structure.structureType == STRUCTURE_ROAD && structure.hits < structure.hitsMax*0.8
+            });
+        }
         // Then look for roads on swamplands
-        else if (target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {
-            filter: (structure) => {
-                if (structure.structureType != STRUCTURE_ROAD) return false;
-                const l = structure.pos.lookFor(LOOK_TERRAIN);
-                return (l.length && l[0] == 'swamp');
-            }
-        })) {
-            if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                utils.moveCreepTo(creep, target, '#ffffff');
-            }
+        if (!target)
+        {
+            target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {
+                filter: (structure) => {
+                    if (structure.structureType != STRUCTURE_ROAD) return false;
+                    const l = structure.pos.lookFor(LOOK_TERRAIN);
+                    return (l.length && l[0] == 'swamp');
+                }
+            });
         }
         // Then look for non-roads
-        else if (target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {
-            filter: (structure) => { return structure.structureType != STRUCTURE_ROAD; }
-        })) {
-            if (creep.build(target) == ERR_NOT_IN_RANGE) {
+        if (!target)
+        {
+            target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {
+                filter: (structure) => { return structure.structureType != STRUCTURE_ROAD; }
+            });
+        }
+        // Then anything else
+        if (!target)
+        {
+            target = utils.findClosest(creep, FIND_CONSTRUCTION_SITES);
+        }
+
+        if (target && target instanceof Structure)
+        {
+            if (creep.repair(target) == ERR_NOT_IN_RANGE)
+            {
                 utils.moveCreepTo(creep, target, '#ffffff');
             }
         }
-        // Then anything else
-        else if (target = utils.findClosest(creep, FIND_CONSTRUCTION_SITES)) {
+        else if (target && target instanceof ConstructionSite)
+        {
             if (creep.build(target) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, target, '#ffffff');
             }
