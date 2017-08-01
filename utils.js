@@ -63,4 +63,10 @@
         //return in_creep.moveTo(in_destination, { ignoreCreeps: creep_moved, visualizePathStyle: visualize_path_style });
         return in_creep.moveTo(in_destination, { ignoreCreeps: false, visualizePathStyle: visualize_path_style });
     },
+
+    energyFull: function (in_target)
+    {
+        return (in_target.energy && in_target.energy == in_target.energyCapacity) ||
+            (in_target.store && in_target.store[RESOURCE_ENERGY] == in_target.storeCapacity);
+    }
 };

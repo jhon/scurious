@@ -68,36 +68,33 @@ module.exports.run = function (creep) {
                             return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                         }
                     });
-                    if (target) creep.memory.target_id = target.id;
                 }
             }
-            if (!target || target.energy == target.energyCapacity) {
+            if (!target || utils.energyFull(target)) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION ||
                             structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
                     }
                 });
-                if (target) creep.memory.target_id = target.id;
             }
-            if (!target || target.energy == target.energyCapacity) {
+            if (!target || utils.energyFull(target)) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                     }
                 });
-                if (target) creep.memory.target_id = target.id;
             }
-            if (!target || target.energy == target.energyCapacity) {
+            if (!target || utils.energyFull(target)) {
                 target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] < structure.storeCapacity;
                     }
                 });
-                if (target) creep.memory.target_id = target.id;
             }
             // If a suitable target exists, transfer energy there
             if (target) {
+                creep.memory.target_id = target.id;
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     utils.moveCreepTo(creep, target, '#ffffff');
                 }
