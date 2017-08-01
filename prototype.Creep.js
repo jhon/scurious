@@ -38,8 +38,14 @@ Creep.prototype.isWorthRecycling = function (minReturn = 10, steps = 0) {
 ////
 Creep.prototype.run = function ()
 {
-    this.memory.ttl = this.ticksToLive;
-    this.memory.ttl_max = Math.max(this.ticksToLive, this.memory.ttl_max);
+    if (!this.spawning) {
+        this.memory.ttl = this.ticksToLive;
+        this.memory.ttl_max = Math.max(this.ticksToLive, this.memory.ttl_max);
+    }
+    else {
+        this.memory.ttl = Infinity;
+        this.memory.ttl_max = 0;
+    }
 
     if (this.memory.role != 'dmw') {
         // If the creep can't work or move or if it isn't worth keeping around: kill it off
@@ -49,7 +55,7 @@ Creep.prototype.run = function ()
             (!parts.carry && part_max.carry) ||
             (!parts.claim && part_max.claim) ||
             !parts.move);
-        if (force_suicide || this.memory.ttl < 50) {
+        if (force_suicide || this.memory.ttl < 0) {
             if (this.memory.work in Memory.exterior_rooms) {
                 _.remove(Memory.exterior_rooms[this.memory.work].creeps[this.memory.role],
                     x => x == this.name);
