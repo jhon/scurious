@@ -56,6 +56,8 @@ module.exports.loop = function () { profiler.wrap(function() {
 
     screepsplus.collect_stats();
 
+    Memory.stats.creeps = _.countBy(Memory.creeps, 'role');
+
     Memory.stats.cpu.Start = Memory.cpu_stats.Start;
     Memory.stats.cpu.Structures = Memory.cpu_stats.Structures;
     Memory.stats.cpu.Creeps = Memory.cpu_stats.Creeps;
