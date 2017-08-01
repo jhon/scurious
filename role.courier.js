@@ -7,27 +7,56 @@ module.exports.run = function (creep) {
     }
     if (!creep.memory.harvesting && creep.carry.energy == 0) {
         creep.memory.harvesting = true;
+        creep.memory.source_id = null;
         creep.memory.target_id = null;
     }
 
     if (creep.memory.harvesting) {
-        // Are their dropped resources? Prioritize those
         let source = utils.findClosest(creep, FIND_DROPPED_RESOURCES);
         if (source && source.energy >= creep.carryCapacity / 2 && creep.pickup(source) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#00aaff');
         }
-        
-        // Otherwise, go to your normal sources
-        else if ((source = utils.findClosest(creep, FIND_STRUCTURES, {
-            filter: s => s.structureType === STRUCTURE_CONTAINER && s.store.energy > 0
-        })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(creep, source, '#ffaa00');
+        if (!source) {
+            source = Game.getObjectById(creep.memory.source_id);
         }
-        else if ((source = utils.findClosest(creep, FIND_MY_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType === STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] > 0;
-            }
-        })) && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        // Try a link first
+        if (!source) {
+            source = creep.pos.findInRange(FIND_STRUCTURES, 10, {
+                filter: (structure) => {
+                    return (structure.structureType === STRUCTURE_LINK) &&
+                        structure.energy > creep.carryCapacity;
+                }
+            })[0];
+        }
+        // If we can't pull from our previous target, it gets reset here so we don't
+        //   now try to pull from a link wherever we ended up
+        if (!source || (source.energy && source.energy == 0) || (source.store && source.store[RESOURCE_ENERGY] == 0)) {
+            source = null;
+        }
+        // Try Containers second
+        if (!source) {
+            source = utils.findClosest(creep, FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return structure.structureType === STRUCTURE_CONTAINER &&
+                        structure.store[RESOURCE_ENERGY] > 0;
+                }
+            });
+        }
+        // Try Storage third
+        if (!source) {
+            source = utils.findClosest(creep, FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return structure.structureType === STRUCTURE_STORAGE &&
+                        structure.store[RESOURCE_ENERGY] > 0;
+                }
+            });
+        }
+
+        if (source) {
+            creep.memory.source_id = source.id;
+        }
+
+        if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             utils.moveCreepTo(creep, source, '#ffaa00');
         }
     }
