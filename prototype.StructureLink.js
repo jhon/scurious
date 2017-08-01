@@ -11,9 +11,9 @@ StructureLink.prototype.run = function () {
     // Find other links in the room
     let links = this.room.find(FIND_STRUCTURES, { filter: x => x.structureType == STRUCTURE_LINK && x.id != this.id });
 
-    // Determine their defecit
-    let lowest = _.max(links, x => x.energyCapacity - x.energy);
+    // Fill the furthest first
+    let furthest = _.max(links, x => utils.calcDist(this.pos,x.pos));
 
-    this.transferEnergy(lowest);
+    this.transferEnergy(furthest);
     
 }
