@@ -114,8 +114,7 @@ function createRoomPlan(controller, structures) {
         let links = grouped_structures[STRUCTURE_LINK].concat(grouped_sites[STRUCTURE_LINK]);
         // Is there one within 2 units of the controller?
         {
-            let nearby_links = _.filter(links, x => utils.calcDist(controller.pos, x.pos) < 3);
-            console.log(JSON.stringify(nearby_links));
+            let nearby_links = _.filter(links, x => x && utils.calcDist(controller.pos, x.pos) < 3);
             if (nearby_links.length < 1)
             {
                 let link_goals = structure_goals.slice();
@@ -178,13 +177,13 @@ function createRoomPlan(controller, structures) {
     // CONSTRUCT SOURCE CONTAINERS
     //
     {
-        let containers = grouped_structures[STRUCTURE_CONTAINER](grouped_sites[STRUCTURE_CONTAINER]);
+        let containers = grouped_structures[STRUCTURE_CONTAINER].concat(grouped_sites[STRUCTURE_CONTAINER]);
         let source_goals = structure_goals.slice();
 
         let containers_per_source = Math.floor(5 / sources.length);
 
         _.each(sources, function (s) {
-            let nearby_containers = _.filter(containers, (x) => utils.calcDist(s.pos, x.pos) < 2);
+            let nearby_containers = _.filter(containers, (x) => x && (utils.calcDist(s.pos, x.pos) < 2));
             if (nearby_containers.length < containers_per_source) {
                 source_goals.push({ pos: s.pos, range: 1 });
                 let path = PathFinder.search(s.pos, source_goals, { roomCallback: function (room) { return cost_matrix }, plainCost: 2, swampCost: 10, flee: true });
