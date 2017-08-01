@@ -2,6 +2,7 @@ require('prototype.Structure');
 require('prototype.StructureController');
 require('prototype.StructureSpawn');
 require('prototype.StructureTower');
+require('prototype.StructureLink');
 require('prototype.Creep');
 const screepsplus = require('LispEngineer_screepsplus');
 
