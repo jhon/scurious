@@ -3,10 +3,11 @@
 const MAX_SPAWNS = [0, 1, 1, 1, 1, 1, 1, 2, 2];
 const MAX_STORAGE = [0, 0, 0, 0, 1, 1, 1, 1, 1];
 const MAX_EXTENSIONS = [0, 0, 5, 10, 20, 30, 40, 50, 60];
+const MAX_LINKS = [0, 0, 0, 0, 0, 2, 3, 4, 6];
 
 function countBuildings(type, structures, sites)
 {
-    (type in structures) ? structures[type].length : 0 +
+    return (type in structures) ? structures[type].length : 0 +
         (type in sites) ? sites[type].length : 0;
 }
 
@@ -45,6 +46,7 @@ function createRoomPlan(controller, structures) {
 
     let grouped_structures = _.groupBy(structures, 'structureType');
     let grouped_sites = _.groupBy(construction_sites, 'structureType');
+    let sources = controller.room.find(FIND_SOURCES);
 
     //
     // CONSTRUCT ADDITIONAL SPAWNS
@@ -59,6 +61,87 @@ function createRoomPlan(controller, structures) {
                 return;
             }
         }
+    }
+
+    //
+    // CONSTRUCT LINKS
+    //
+    if (controller.my && countBuildings(STRUCTURE_LINK, grouped_structures, grouped_sites) < MAX_LINKS[controller.level])
+    {
+        // Is there 1 within 2 units of a source?
+        let sourcelink = false;
+        let furthest_source = null;
+        let furthest_source_distance = undefined;
+        for (let i in sources)
+        {
+            let d = utils.calcDist(sources[i].pos, grouped_structures[STRUCTURE_SPAWN][0]);
+            if (!furthest_source_distance || furthest_source_distance < d)
+            {
+                furthest_source = sources[i];
+                furthest_source_distance = d;
+            }
+            for (let j in grouped_structures[STRUCTURE_LINK])
+            {
+                sourcelink = utils.calcDist(sources[i].pos, grouped_structures[STRUCTURE_LINK][j].pos) < 3;
+                if (sourcelink) {
+                    break;
+                }
+            }
+            if (sourcelink) {
+                break;
+            }
+            for (let j in grouped_sites[STRUCTURE_LINK]) {
+                sourcelink = utils.calcDist(sources[i].pos, grouped_sites[STRUCTURE_LINK][j].pos) < 3;
+                if (sourcelink) {
+                    break;
+                }
+            }
+            if (sourcelink) {
+                break;
+            }
+        }
+        if (!sourcelink && furthest_source)
+        {
+            let link_goals = structure_goals.slice();
+            link_goals.push({ pos: furthest_source.pos, range: 2 });
+            let path = PathFinder.search(furthest_source.pos, link_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
+            if (path.path.length != 0 && !path.incomplete) {
+                controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_LINK);
+                return;
+            }
+        }
+
+        let links = grouped_structures[STRUCTURE_LINK].concat(grouped_sites[STRUCTURE_LINK]);
+        // Is there one within 2 units of the controller?
+        {
+            let nearby_links = _.filter(links, x => utils.calcDist(controller.pos, x.pos) < 3);
+            console.log(JSON.stringify(nearby_links));
+            if (nearby_links.length < 1)
+            {
+                let link_goals = structure_goals.slice();
+                link_goals.push({ pos: controller.pos, range: 2 });
+                let path = PathFinder.search(controller.pos, link_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
+                if (path.path.length != 0 && !path.incomplete) {
+                    controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_LINK);
+                    return;
+                }
+            }
+        }
+        // Is there one within 1 unit of a spawn?
+        {
+            let nearby_links = _.filter(links, x => utils.calcDist(grouped_structures[STRUCTURE_SPAWN][0].pos, x.pos) < 2);
+            if (nearby_links.length < 1) {
+                let link_goals = _.map(structure_goals, function (x) { return { pos: x.pos, range: 1 }; });
+                let path = PathFinder.search(grouped_structures[STRUCTURE_SPAWN][0].pos, link_goals, { roomCallback: r => cost_matrix, plainCost: 2, swampCost: 10, flee: true });
+                if (path.path.length != 0 && !path.incomplete) {
+                    controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_LINK);
+                    return;
+                }
+            }
+        }
+
+        // TODO: Is there 1 within 2 units of all sources?
+        // TODO: Is there 1 within 1 units of all spawns?
     }
 
     //
@@ -95,17 +178,16 @@ function createRoomPlan(controller, structures) {
     // CONSTRUCT SOURCE CONTAINERS
     //
     {
-        let sources = controller.room.find(FIND_SOURCES);
-        let containers = grouped_structures[STRUCTURE_CONTAINER];
-        containers.concat(grouped_sites[STRUCTURE_CONTAINER]);
+        let containers = grouped_structures[STRUCTURE_CONTAINER](grouped_sites[STRUCTURE_CONTAINER]);
+        let source_goals = structure_goals.slice();
 
         let containers_per_source = Math.floor(5 / sources.length);
 
         _.each(sources, function (s) {
             let nearby_containers = _.filter(containers, (x) => utils.calcDist(s.pos, x.pos) < 2);
             if (nearby_containers.length < containers_per_source) {
-                structure_goals.push({ pos: s.pos, range: 1 });
-                let path = PathFinder.search(s.pos, structure_goals, { roomCallback: function (room) { return cost_matrix }, plainCost: 2, swampCost: 10, flee: true });
+                source_goals.push({ pos: s.pos, range: 1 });
+                let path = PathFinder.search(s.pos, source_goals, { roomCallback: function (room) { return cost_matrix }, plainCost: 2, swampCost: 10, flee: true });
                 if (path.path.length != 0 && !path.incomplete) {
                     controller.room.createConstructionSite(path.path[path.path.length - 1], STRUCTURE_CONTAINER);
                     return;
