@@ -83,10 +83,10 @@ module.exports.run = function (creep) {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                     }
-                });
+                })[0];
             }
             if (!target || utils.energyFull(target)) {
-                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] < structure.storeCapacity;
                     }
@@ -98,6 +98,7 @@ module.exports.run = function (creep) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     utils.moveCreepTo(creep, target, '#ffffff');
                 }
+                //console.log(target,creep.transfer(target, RESOURCE_ENERGY));
             }
         }
     }

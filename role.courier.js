@@ -54,10 +54,14 @@ module.exports.run = function (creep) {
 
         if (source) {
             creep.memory.source_id = source.id;
-        }
-
-        if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(creep, source, '#ffaa00');
+            let result = creep.withdraw(source, RESOURCE_ENERGY);
+            if (result == ERR_NOT_IN_RANGE) {
+                utils.moveCreepTo(creep, source, '#ffaa00');
+            }
+            else if (result == ERR_INVALID_TARGET)
+            {
+                creep.memory.source_id = null;
+            }
         }
     }
     // If we're done harvesting and we're outside the room, navigate back
