@@ -23,6 +23,14 @@ module.exports.loop = function () { profiler.wrap(function() {
     }
     */
 
+    for (let r in Memory.exterior_rooms)
+    {
+        for (let t in Memory.exterior_rooms[r].creeps)
+        {
+            _.remove(Memory.exterior_rooms[r].creeps[t], x => !Game.creeps[x]);
+        }
+    }
+
     // Clean up creep memory for creeps we don't have any more :(
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
