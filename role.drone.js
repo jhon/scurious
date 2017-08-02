@@ -79,7 +79,7 @@ module.exports.run = function (creep) {
                 });
             }
             if (!target || utils.energyFull(target)) {
-                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                target = creep.pos.findInRange(FIND_STRUCTURES, 10, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                     }
