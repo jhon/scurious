@@ -70,7 +70,7 @@ StructureSpawn.prototype.run = function () {
 	}
 	let found_match = false;
 	if (!this.spawning) {
-		let num_creeps = _.countBy(_.filter(Memory.creeps, x => x.ttl > 25), 'role');
+		let num_creeps = _.countBy(Memory.creeps, 'role');
 
 		for (let t in INTERIOR_CREEP_MAXIMUMS) {
 			if (!num_creeps[t] || num_creeps[t] < INTERIOR_CREEP_MAXIMUMS[t]) {
