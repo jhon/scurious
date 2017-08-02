@@ -197,7 +197,7 @@ function createRoomPlan(controller, structures, construction_sites) {
 
 function printStatistics(controller,adjacent_rooms)
 {
-    let rv = new RoomVisual(controller.room.name);
+    let rv = controller.room.visual;
     let creeps = _.groupBy(Memory.creeps, 'work');
     rv.text(controller.room.name + ": " + JSON.stringify(_.countBy(creeps[controller.room.name], 'role')), 0, 0, { align: 'left' });
     
@@ -212,45 +212,41 @@ function printStatistics(controller,adjacent_rooms)
 }
 
 StructureController.prototype.run = function () {
+    // We don't seem to get called for !this.my anyway buuut....
+    if (!this.my) {
+        return;
+    }
+
     if (!Memory.controllers[this.room.name]) {
         Memory.controllers[this.room.name] = {};
     }
     this.memory = Memory.controllers[this.room.name];
 
+    // Map out the surrounding rooms
+    let adjacent_rooms = _.values(Game.map.describeExits(this.room.name));
+    let exterior_rooms = _.map(adjacent_rooms, x => _.values(Game.map.describeExits(x)));
+    for (let i in exterior_rooms) {
+        adjacent_rooms = adjacent_rooms.concat(exterior_rooms[i]);
+    }
+    if (!Memory.exterior_rooms) {
+        Memory.exterior_rooms = {};
+    }
+    _.remove(adjacent_rooms, x => x == this.room.name);
+    for (let i in adjacent_rooms) {
+        let e = adjacent_rooms[i];
+        if (!Memory.exterior_rooms[e]) {
+            Memory.exterior_rooms[e] = { creeps: {} };
+        }
+    }
+
+    printStatistics(this, adjacent_rooms);
+
     let structures = this.room.find(FIND_STRUCTURES);
     let construction_sites = this.room.find(FIND_MY_CONSTRUCTION_SITES);
-
-    // If it's our controller, we do buildy buildy stuff
-    if (this.my) {
-        // Map out the surrounding rooms
-        let adjacent_rooms = _.values(Game.map.describeExits(this.room.name));
-        let exterior_rooms = _.map(adjacent_rooms, x => _.values(Game.map.describeExits(x)));
-        for (let i in exterior_rooms) {
-            adjacent_rooms = adjacent_rooms.concat(exterior_rooms[i]);
-        }
-        if (!Memory.exterior_rooms) {
-            Memory.exterior_rooms = {};
-        }
-        _.remove(adjacent_rooms, x => x == this.room.name);
-        for (let i in adjacent_rooms) {
-            let e = adjacent_rooms[i];
-            if (!Memory.exterior_rooms[e]) {
-                Memory.exterior_rooms[e] = { creeps: {} };
-            }
-        }
-
-        printStatistics(this, adjacent_rooms);
-
-        if (this.memory.level != this.level || structures.length != this.memory.numStructures || construction_sites.length != this.memory.numConstructionSites) {
-            createRoomPlan(this, structures, construction_sites);
-            this.memory.level = this.level;
-            this.memory.numStructures = structures.length;
-            this.memory.numConstructionSites = construction_sites.length;
-        }
+    if (this.memory.level != this.level || structures.length != this.memory.numStructures || construction_sites.length != this.memory.numConstructionSites) {
+        createRoomPlan(this, structures, construction_sites);
+        this.memory.level = this.level;
+        this.memory.numStructures = structures.length;
+        this.memory.numConstructionSites = construction_sites.length;
     }
-    // Otherwise...
-    else {
-        
-    }
-
 }
