@@ -43,8 +43,8 @@ Creep.prototype.run = function ()
         this.memory.ttl_max = Math.max(this.ticksToLive, this.memory.ttl_max);
     }
     else {
-        this.memory.ttl = Infinity;
-        this.memory.ttl_max = 0;
+        this.memory.ttl = 1500;
+        this.memory.ttl_max = 500;
     }
 
     if (this.memory.role != 'dmw') {

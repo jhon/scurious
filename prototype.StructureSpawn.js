@@ -102,7 +102,7 @@ StructureSpawn.prototype.run = function () {
 			//if (Memory.exterior_rooms[i].last_death + 600 > Game.time) {
 			//	continue;
 			//}
-			let room_creeps = _.countBy(_.filter(exterior_creeps[i], x => x.ttl > 25), 'role');
+			let room_creeps = _.countBy(exterior_creeps[i], 'role');
 			for (let t in EXTERIOR_CREEP_MAXIMUMS) {
 				if (room_creeps[t] && room_creeps[t] >= EXTERIOR_CREEP_MAXIMUMS[t]) {
 					continue;
