@@ -32,8 +32,10 @@ module.exports.run = function (creep) {
         }
         let hostile = Game.getObjectById(creep.memory.hostile_id);
         if (!hostile) {
-            hostile = hostiles[_.random(hostiles.length)-1];
-            creep.memory.hostile_id = hostile.id;
+            hostile = hostiles[_.random(hostiles.length) - 1];
+            if (hostile) {
+                creep.memory.hostile_id = hostile.id;
+            }
         }
 
         // Move closer, ranged attack, attack
