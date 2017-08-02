@@ -11,8 +11,7 @@ function countBuildings(type, structures, sites)
         ((type in sites) ? sites[type].length : 0);
 }
 
-function createRoomPlan(controller, structures) {
-    let construction_sites = controller.room.find(FIND_MY_CONSTRUCTION_SITES);
+function createRoomPlan(controller, structures, construction_sites) {
     if (construction_sites.length >= 1) {
         return;
     }
@@ -213,44 +212,45 @@ function printStatistics(controller,adjacent_rooms)
 }
 
 StructureController.prototype.run = function () {
+    if (!Memory.controllers[this.room.name]) {
+        Memory.controllers[this.room.name] = {};
+    }
     this.memory = Memory.controllers[this.room.name];
-    if (!this.memory) {
-        this.memory = {}
-    }
-
-    // We're only dealing with our controllers right now :)
-    if (!this.my) {
-        return;
-    }
-
-    // Map out the surrounding rooms
-    let adjacent_rooms = _.values(Game.map.describeExits(this.room.name));
-    let exterior_rooms = _.map(adjacent_rooms, x => _.values(Game.map.describeExits(x)));
-    for (let i in exterior_rooms)
-    {
-        adjacent_rooms = adjacent_rooms.concat(exterior_rooms[i]);
-    }
-    if (!Memory.exterior_rooms)
-    {
-        Memory.exterior_rooms = {};
-    }
-    _.remove(adjacent_rooms, x => x == this.room.name);
-    for (let i in adjacent_rooms) {
-        let e = adjacent_rooms[i];
-        if (!Memory.exterior_rooms[e]) {
-            Memory.exterior_rooms[e] = { creeps: {}};
-        }
-    }
-
-    printStatistics(this,adjacent_rooms);
 
     let structures = this.room.find(FIND_STRUCTURES);
+    let construction_sites = this.room.find(FIND_MY_CONSTRUCTION_SITES);
 
-    if (this.memory.level != this.level || structures.length != this.memory.numStructures)
-    {
-        createRoomPlan(this, structures);
-        this.memory.level = this.level;
-        this.memory.numStructures = structures.length;
+    // If it's our controller, we do buildy buildy stuff
+    if (this.my) {
+        // Map out the surrounding rooms
+        let adjacent_rooms = _.values(Game.map.describeExits(this.room.name));
+        let exterior_rooms = _.map(adjacent_rooms, x => _.values(Game.map.describeExits(x)));
+        for (let i in exterior_rooms) {
+            adjacent_rooms = adjacent_rooms.concat(exterior_rooms[i]);
+        }
+        if (!Memory.exterior_rooms) {
+            Memory.exterior_rooms = {};
+        }
+        _.remove(adjacent_rooms, x => x == this.room.name);
+        for (let i in adjacent_rooms) {
+            let e = adjacent_rooms[i];
+            if (!Memory.exterior_rooms[e]) {
+                Memory.exterior_rooms[e] = { creeps: {} };
+            }
+        }
+
+        printStatistics(this, adjacent_rooms);
+
+        if (this.memory.level != this.level || structures.length != this.memory.numStructures || construction_sites.length != this.memory.numConstructionSites) {
+            createRoomPlan(this, structures, construction_sites);
+            this.memory.level = this.level;
+            this.memory.numStructures = structures.length;
+            this.memory.numConstructionSites = construction_sites.length;
+        }
+    }
+    // Otherwise...
+    else {
+        
     }
 
 }
