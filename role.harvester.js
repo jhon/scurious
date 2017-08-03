@@ -44,12 +44,15 @@ module.exports.run = function (creep) {
                     return (structure.structureType == STRUCTURE_CONTAINER) && structure.store.energy < structure.storeCapacity;
                 }
             });
-            if (target) creep.memory.target_id = target.id;
         }
         // ULTIMATE COSMIC POWER!
         if (target) {
+            creep.memory.target_id = target.id;
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 utils.moveCreepTo(creep, target, '#ffffff');
+            }
+            else {
+                creep.memory.target_id = null;
             }
         }
     }
