@@ -98,7 +98,9 @@ module.exports.run = function (creep) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     utils.moveCreepTo(creep, target, '#ffffff');
                 }
-                //console.log(target,creep.transfer(target, RESOURCE_ENERGY));
+                else {
+                    creep.memory.target_id = null;
+                }
             }
         }
     }
