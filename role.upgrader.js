@@ -26,7 +26,7 @@ module.exports.run = function (creep) {
         // Grab energy from a link if it's super close
         let source = Game.getObjectById(creep.memory.source_id);
         if (!source) {
-            source = creep.pos.findInRange(FIND_STRUCTURES, 10, {
+            source = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 10, {
                 filter: (structure) => {
                     return (structure.structureType === STRUCTURE_LINK) &&
                         structure.energy > creep.carryCapacity;
@@ -49,11 +49,14 @@ module.exports.run = function (creep) {
         if (source)
         {
             creep.memory.source_id = source.id;
-        }
 
-        // Grab energy from containers / storage
-        if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            utils.moveCreepTo(creep, source, '#ffaa00');
+            // Grab energy from containers / storage
+            if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                utils.moveCreepTo(creep, source, '#ffaa00');
+            }
+            else {
+                creep.memory.source_id = null;
+            }
         }
     }
 };
